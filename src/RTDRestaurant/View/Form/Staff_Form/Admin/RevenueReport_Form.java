@@ -109,7 +109,6 @@ public class RevenueReport_Form extends javax.swing.JPanel {
         return "Giảm " + percent + "% so với tháng trước";
     }
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

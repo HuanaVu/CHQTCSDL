@@ -84,7 +84,6 @@ public class AccountC_Form extends javax.swing.JPanel {
         obj.ConfirmReName(message, customer);
     }
    
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

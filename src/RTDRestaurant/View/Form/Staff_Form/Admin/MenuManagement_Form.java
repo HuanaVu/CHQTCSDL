@@ -93,7 +93,6 @@ public class MenuManagement_Form extends javax.swing.JPanel {
         tableMA.revalidate();
     }
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

@@ -106,7 +106,6 @@ public class Export_Form extends javax.swing.JPanel {
         tablePXK.revalidate();
     }
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

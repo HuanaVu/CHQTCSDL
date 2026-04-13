@@ -66,7 +66,6 @@ public class CTNK_Form extends javax.swing.JPanel {
         tableCTNK.revalidate();
     }
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

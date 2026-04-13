@@ -84,7 +84,6 @@ public class Bill_Form extends javax.swing.JPanel {
             Logger.getLogger(Bill_Form.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

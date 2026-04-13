@@ -71,7 +71,6 @@ private MS_ChangePassword changepass;
         obj.ConfirmReName(message, staff);
     }
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
