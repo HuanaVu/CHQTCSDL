@@ -87,7 +87,6 @@ public class Main_Admin_Frame extends javax.swing.JFrame {
         main.showForm(new MenuManagement_Form(main));
     }
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

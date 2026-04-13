@@ -103,7 +103,6 @@ public class MS_Confirm extends javax.swing.JDialog {
         return delete;
     }
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

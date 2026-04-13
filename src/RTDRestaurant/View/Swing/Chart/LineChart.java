@@ -166,7 +166,6 @@ public class LineChart extends javax.swing.JPanel {
         return new Dimension((int) r2.getWidth(), (int) r2.getHeight());
     }
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

@@ -37,7 +37,6 @@ public class Message extends javax.swing.JPanel {
             lbMessage.setIcon(new ImageIcon(getClass().getResource("/Icons/error.png")));
         }
     }
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
