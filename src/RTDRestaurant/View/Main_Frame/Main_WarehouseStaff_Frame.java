@@ -78,7 +78,6 @@ public class Main_WarehouseStaff_Frame extends javax.swing.JFrame {
         main.showForm(new Ingredient_Form(main));
     }
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

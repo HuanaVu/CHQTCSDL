@@ -2,8 +2,7 @@
 package RTDRestaurant.View.Swing;
 
 import java.awt.Component;
-import java.util.HashSet;
-import java.util.Set;
+
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;

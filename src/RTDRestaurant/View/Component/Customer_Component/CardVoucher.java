@@ -22,7 +22,7 @@ import javax.swing.ImageIcon;
 public class CardVoucher extends javax.swing.JPanel {
 
     private final ModelVoucher data;
-    private final ModelKhachHang customer;
+
     private final ModelHoaDon hoadon;
     private MS_Warning warning;
     private MS_ConfirmExchangeVoucher exchange;

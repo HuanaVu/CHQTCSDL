@@ -53,7 +53,6 @@ public class CardBan extends javax.swing.JPanel {
         cmdBook.setEnabled(false);
     }
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

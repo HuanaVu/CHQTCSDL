@@ -5,7 +5,7 @@ import RTDRestaurant.Model.ModelNhanVien;
 import RTDRestaurant.Model.ModelNguoiDung;
 import RTDRestaurant.View.Dialog.MS_ChangePassword;
 import RTDRestaurant.View.Dialog.MS_ConfirmRename;
-import RTDRestaurant.View.Main_Frame.Main_Customer_Frame;
+
 import RTDRestaurant.View.Main_Frame.Main_Staff_Frame;
 import java.sql.SQLException;
 import java.util.logging.Level;

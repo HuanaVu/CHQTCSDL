@@ -10,14 +10,13 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 public class CusInformation_Form extends javax.swing.JPanel {
 
     private ServiceStaff service;
     private ArrayList<ModelKhachHang> list;
-    private final MainForm main;
+
     private DecimalFormat df;
 
     public CusInformation_Form(MainForm main) {

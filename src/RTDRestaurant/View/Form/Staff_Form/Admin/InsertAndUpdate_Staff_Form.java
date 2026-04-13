@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
+
 import javax.swing.JTextField;
 
 public class InsertAndUpdate_Staff_Form extends javax.swing.JPanel {

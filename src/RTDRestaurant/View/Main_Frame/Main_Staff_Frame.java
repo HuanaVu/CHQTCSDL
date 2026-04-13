@@ -76,7 +76,6 @@ public class Main_Staff_Frame extends javax.swing.JFrame {
         main.showForm(new TableMenuS_Form("Tang 1",user,main));
     }
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

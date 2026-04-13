@@ -11,7 +11,7 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
-import java.util.HashSet;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jdesktop.animation.timing.Animator;
@@ -73,7 +73,6 @@ public class MS_ConfirmReserve extends javax.swing.JDialog {
         setVisible(true);
     }
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
