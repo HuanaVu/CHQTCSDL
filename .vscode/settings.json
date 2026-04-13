@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    "**/src/DataBase/Database.sql": "plaintext",
+    "**/src/DataBase/INSERT_DATA.sql": "plaintext",
+    "**/build/classes/DataBase/Database.sql": "plaintext"
+  }
+}

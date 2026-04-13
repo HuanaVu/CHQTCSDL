@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Royal TheDreamers - Khách hàng</title>
+  <link rel="stylesheet" href="/portal.css?v=20260412-customer-netbeans-9" />
+</head>
+<body class="nb-customer-page">
+  <main class="nb-customer-shell">
+    <aside class="nb-sidebar">
+      <div class="nb-brand">
+        <div class="nb-logo">RTD</div>
+        <div>
+          <p class="nb-title">Royal TheDreamers</p>
+          <p class="nb-sub">Restaurant ★★★★★</p>
+        </div>
+      </div>
+
+      <nav class="nb-nav">
+        <button class="nb-nav-item is-active" data-section="food">Menu - Zodiac Concept</button>
+        <button class="nb-nav-item" data-section="tables">Đặt bàn</button>
+        <button class="nb-nav-item" data-section="about">About US</button>
+
+        <div class="nb-divider"></div>
+
+        <button class="nb-nav-item" data-section="account">Tài Khoản</button>
+        <button class="nb-nav-item" data-section="voucher">Điểm tích lũy</button>
+        <button class="nb-nav-item" data-section="bill">Lịch sử hóa đơn</button>
+        <a class="nb-logout" href="/">Đăng Xuất</a>
+      </nav>
+    </aside>
+
+    <section class="nb-main" id="mainFoodSection">
+      <header class="nb-header" id="menuHeader">
+        <div class="nb-route" id="menuPath">Menu/Scorpio - Bọ Cạp</div>
+        <div class="nb-table-box">
+          <span>MÃ BÀN CỦA BẠN</span>
+          <strong id="selectedTableText">Chưa đặt bàn</strong>
+        </div>
+        <button class="nb-bill-button" data-goto="bill">XEM HÓA ĐƠN</button>
+      </header>
+
+      <div class="nb-toolbar" id="menuToolbar">
+        <input id="foodSearch" type="text" placeholder="Tìm kiếm món ăn . . ." />
+        <label class="nb-sort">
+          <span>Sắp xếp theo</span>
+          <select id="foodSort">
+            <option value="">Mặc định</option>
+            <option value="priceAsc">Giá tăng dần</option>
+            <option value="priceDesc">Giá giảm dần</option>
+            <option value="nameAsc">Tên A-Z</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="nb-zodiac-row" id="zodiacTabs"></div>
+
+      <section class="nb-panel" id="foodPanel">
+        <section class="nb-food-grid" id="foodGrid"></section>
+      </section>
+
+      <section class="nb-panel" id="tablePanel" hidden>
+        <div class="nb-panel-head">
+          <h2>Đặt bàn</h2>
+          <div id="floorTabs" class="chip-group"></div>
+        </div>
+        <div id="tableCards" class="nb-table-grid"></div>
+      </section>
+
+      <section class="nb-panel" id="billPanel" hidden>
+        <div class="nb-bill-headline">Lịch sử hóa đơn</div>
+
+        <div class="nb-bill-summary">
+          <h3>Doanh số của bạn</h3>
+          <strong id="billRevenue">0đ</strong>
+        </div>
+
+        <div class="nb-pay-box">
+          <p id="unpaidBillInfo">Không có hóa đơn chưa thanh toán</p>
+        </div>
+
+        <div class="nb-bill-list-head">
+          <h3>Danh sách Hóa Đơn</h3>
+        </div>
+
+        <div class="nb-bill-tools">
+          <label class="nb-bill-search-wrap">
+            <span class="nb-bill-search-icon">🔍</span>
+            <input id="billSearch" type="text" placeholder="Tìm kiếm Hóa Đơn . . ." />
+          </label>
+          <label class="nb-bill-filter-wrap">
+            <span>Hiển thị theo</span>
+            <select id="billStatusFilter">
+              <option value="all">Tất cả</option>
+              <option value="unpaid">Chưa thanh toán</option>
+              <option value="paid">Đã thanh toán</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="table-wrap nb-bill-table-wrap">
+          <table>
+            <thead>
+              <tr><th>Mã Hóa Đơn</th><th>Ngày HD</th><th>Tiền Món Ăn</th><th>Voucher</th><th>Tiền Giảm</th><th>Tổng tiền</th><th>Trạng thái</th><th>Thao tác</th></tr>
+            </thead>
+            <tbody id="billRows"><tr><td colspan="8">Đang tải...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="nb-panel" id="voucherPanel" hidden>
+        <div class="nb-voucher-headline">🎫 Điểm tích lũy</div>
+        <div class="nb-voucher-point-row">
+          <div class="nb-voucher-point-label">Điểm tích lũy của bạn</div>
+          <div class="nb-voucher-point-value" id="voucherPoint">0 xu</div>
+        </div>
+        <div class="nb-voucher-divider"></div>
+
+        <div class="nb-voucher-title">Đổi Voucher</div>
+        <div class="nb-voucher-tools">
+          <label class="nb-voucher-search-wrap">
+            <span class="nb-voucher-search-icon">🔍</span>
+            <input id="voucherSearch" type="text" placeholder="Tìm kiếm Voucher . . ." />
+          </label>
+          <label class="nb-voucher-filter-wrap">
+            <span>Hiển thị theo</span>
+            <select id="voucherFilter">
+              <option value="all">Tất cả</option>
+              <option value="affordable">Đủ điểm đổi</option>
+              <option value="out">Hết số lượng</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="nb-voucher-card-wrap mt12" id="voucherCardGrid">
+          <div class="nb-empty">Đang tải voucher...</div>
+        </div>
+      </section>
+
+      <section class="nb-panel" id="accountPanel" hidden>
+        <div class="nb-account-layout">
+          <section class="nb-account-block">
+            <div class="nb-account-title">Thông tin KHÁCH HÀNG</div>
+            <div class="nb-account-profile-row">
+              <div class="nb-account-avatar-wrap">
+                <img src="/api/dish-image?type=Unknown&id=unknown" alt="avatar" class="nb-account-avatar" loading="lazy" />
+              </div>
+              <div class="nb-account-fields">
+                <div class="nb-account-field"><label>Mã Khách hàng</label><strong id="accCustomerId">--</strong></div>
+                <div class="nb-account-field"><label>Tên Khách Hàng</label><strong id="accName">--</strong></div>
+                <div class="nb-account-field"><label>Ngày tham gia</label><strong id="accJoinedDate">--</strong></div>
+                <div class="nb-account-field"><label>Doanh số</label><strong id="accSales">0đ</strong></div>
+                <div class="nb-account-field"><label>Điểm tích lũy</label><strong id="accPoint">0 xu</strong></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="nb-account-block">
+            <div class="nb-account-title">Thông tin TÀI KHOẢN</div>
+            <div class="nb-account-login-grid">
+              <div class="nb-account-field"><label>Email</label><strong id="accEmail">--</strong></div>
+              <div class="nb-account-field"><label>Vai trò</label><strong id="accRole">Khách Hàng</strong></div>
+              <div class="nb-account-field"><label>Mật khẩu</label><strong>●●●</strong></div>
+              <div class="nb-account-password-action">
+                <button type="button" class="nb-account-pass-btn" title="Tính năng sẽ cập nhật sau">Đổi mật khẩu</button>
+              </div>
+            </div>
+            <div class="nb-account-meta">User ID: <span id="accUserId">--</span></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="nb-panel nb-about-panel" id="aboutPanel" hidden>
+        <div class="nb-about-layout">
+          <article class="nb-about-copy">
+            <h2>ABOUT US</h2>
+            <p class="nb-about-tagline">Tastes like a bit of heaven on your tongue.</p>
+            <h3>Welcome to ROYAL THEDREAMERS</h3>
+            <p>
+              Nhà hàng của chúng tôi là biểu tượng của sự thanh lịch và sang trọng. Với kiến trúc đẹp mắt, nội thất đậm chất cổ điển
+              và sự chú trọng đến từng chi tiết nhỏ, chúng tôi tạo ra một không gian lịch sự và đẳng cấp.
+            </p>
+            <p>
+              Đội ngũ đầu bếp chúng tôi là những nghệ nhân ẩm thực, tạo ra những tác phẩm nghệ thuật trên đĩa.
+              Với sự khéo léo trong việc kết hợp các hương vị, chúng tôi mang đến cho thực khách những trải nghiệm ẩm thực độc đáo và tinh tế.
+              Chúng tôi sử dụng các nguyên liệu tươi ngon và cao cấp nhất, kết hợp với sự sáng tạo và kỹ thuật chế biến tinh tế để tạo nên
+              những món ăn truyền thống với một phong cách hiện đại và độc đáo.
+            </p>
+            <p>
+              Nhà hàng của chúng tôi là một nơi lý tưởng để tụ họp với gia đình và bạn bè, nơi mà từng chi tiết đều được chăm chút tỉ mỉ.
+              Không gian tiếp khách được thiết kế để tạo ra sự riêng tư và thoải mái, với ánh sáng dịu nhẹ và không gian yên tĩnh,
+              tạo điều kiện lý tưởng để thưởng thức bữa ăn thượng hạng.
+            </p>
+            <p>
+              Đội ngũ nhân viên phục vụ của chúng tôi, với sự chuyên nghiệp và tận tâm, sẽ đảm bảo rằng mỗi khách hàng được đối xử
+              với sự chu đáo và sự phục vụ tận tâm. Chúng tôi sẽ tạo ra những trải nghiệm ẩm thực đáng nhớ, vượt xa mong đợi của quý khách.
+            </p>
+            <p>
+              Hãy đến và khám phá không gian thanh lịch, tinh tế và sang trọng của nhà hàng chúng tôi.
+              Chúng tôi cam kết đem đến cho quý khách một trải nghiệm ẩm thực đẳng cấp và không gian lịch sự,
+              để bạn có thể thưởng thức một bữa ăn ngon và có được những kỷ niệm chưa từng có.
+            </p>
+            <p class="nb-about-signature">Since: 2023 - Co-founder by The Dreamers Team</p>
+          </article>
+          <aside class="nb-about-media">
+            <img src="/api/dish-image?type=Scorpio&id=53" alt="Royal TheDreamers" loading="lazy" />
+          </aside>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div id="paymentMethodModal" class="nb-pay-modal" hidden>
+    <div class="nb-pay-modal-card" role="dialog" aria-modal="true" aria-labelledby="paymentMethodTitle">
+      <button type="button" class="nb-pay-close" id="closePayModalBtn" aria-label="Đóng">×</button>
+      <div class="nb-pay-modal-body">
+        <h3 id="paymentMethodTitle">Royal TheDreamers Restaurant</h3>
+        <p class="nb-pay-modal-sub">Xem chi tiết hóa đơn, chọn voucher và phương thức thanh toán trước khi xác nhận.</p>
+        <div class="nb-pay-detail-summary">
+          <div><span>Ngày</span><strong id="payBillDateText">--</strong></div>
+          <div><span>Mã hóa đơn</span><strong id="payBillIdText">--</strong></div>
+          <div><span>Bàn</span><strong id="payBillTableText">--</strong></div>
+          <div><span>Trạng thái</span><strong id="payBillStatusText">--</strong></div>
+        </div>
+        <div class="nb-pay-items-title">Món đã đặt</div>
+        <div class="nb-pay-items-wrap">
+          <table class="nb-pay-items-table">
+            <thead>
+              <tr><th>Món ăn</th><th>Số lượng</th><th>Thành tiền</th></tr>
+            </thead>
+            <tbody id="payBillItemsBody"><tr><td colspan="3">Chưa có dữ liệu</td></tr></tbody>
+          </table>
+        </div>
+        <div class="nb-pay-total-grid">
+          <div><span>Tiền Món Ăn</span><strong id="payBillMealTotalText">0đ</strong></div>
+          <div><span>Tiền Giảm Giá</span><strong id="payBillDiscountText">0đ</strong></div>
+          <div class="is-total"><span>Tổng Tiền</span><strong id="payBillTotalText">0đ</strong></div>
+        </div>
+        <div class="nb-pay-modal-grid">
+          <label class="nb-pay-field">
+            <span>Áp dụng voucher (tối đa 1 voucher/hóa đơn)</span>
+            <select id="payVoucherSelect"></select>
+          </label>
+        </div>
+        <div class="nb-pay-methods" id="paymentMethodList">
+          <label class="nb-pay-method-item">
+            <input type="radio" name="paymentMethod" value="cash" checked />
+            <span>Tiền mặt</span>
+          </label>
+          <label class="nb-pay-method-item">
+            <input type="radio" name="paymentMethod" value="card" />
+            <span>Thẻ ngân hàng</span>
+          </label>
+          <label class="nb-pay-method-item">
+            <input type="radio" name="paymentMethod" value="transfer" />
+            <span>Chuyển khoản</span>
+          </label>
+        </div>
+        <div class="nb-pay-modal-actions">
+          <button type="button" id="applyVoucherBtn" class="nb-pay-cancel">Áp dụng voucher</button>
+          <button type="button" id="cancelPayBtn" class="nb-pay-cancel">Hủy</button>
+          <button type="button" id="confirmPayBtn" class="nb-pay-confirm">Xác nhận thanh toán</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastBox" class="toast-box" hidden></div>
+
+  <script>
+    const API_ORIGIN = window.location.protocol === "file:"
+      ? "http://localhost:8081"
+      : `${window.location.protocol}//${window.location.hostname || "localhost"}:8081`;
+    function apiUrl(path) {
+      return `${API_ORIGIN}${path}`;
+    }
+
+    function getAuthContext() {
+      let auth = null;
+      try {
+        auth = JSON.parse(sessionStorage.getItem("rtd.auth") || "null");
+      } catch (_) {
+        auth = null;
+      }
+
+      if (auth && (auth.email || auth.userId || auth.role)) {
+        return auth;
+      }
+
+      const query = new URLSearchParams(window.location.search);
+      const legacy = {
+        email: query.get("email") || "",
+        role: query.get("role") || "",
+        userId: query.get("userId") || ""
+      };
+      if (legacy.email || legacy.role || legacy.userId) {
+        try {
+          sessionStorage.setItem("rtd.auth", JSON.stringify(legacy));
+        } catch (_) {
+          // Ignore storage errors and continue with in-memory values.
+        }
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      return legacy;
+    }
+
+    const authContext = getAuthContext();
+    const email = authContext.email;
+    const role = authContext.role;
+    const userId = authContext.userId;
+    const selectedTableText = document.getElementById("selectedTableText");
+    const toastBox = document.getElementById("toastBox");
+    const paymentMethodModal = document.getElementById("paymentMethodModal");
+    const confirmPayBtn = document.getElementById("confirmPayBtn");
+    const cancelPayBtn = document.getElementById("cancelPayBtn");
+    const applyVoucherBtn = document.getElementById("applyVoucherBtn");
+    const payVoucherSelect = document.getElementById("payVoucherSelect");
+    const payBillIdText = document.getElementById("payBillIdText");
+    const payBillStatusText = document.getElementById("payBillStatusText");
+    const payBillDateText = document.getElementById("payBillDateText");
+    const payBillMealTotalText = document.getElementById("payBillMealTotalText");
+    const payBillDiscountText = document.getElementById("payBillDiscountText");
+    const payBillTotalText = document.getElementById("payBillTotalText");
+    const payBillTableText = document.getElementById("payBillTableText");
+    const payBillItemsBody = document.getElementById("payBillItemsBody");
+    const voucherSearchInput = document.getElementById("voucherSearch");
+    const voucherFilterSelect = document.getElementById("voucherFilter");
+    const voucherCardGrid = document.getElementById("voucherCardGrid");
+    const unpaidBillInfo = document.getElementById("unpaidBillInfo");
+    const menuHeader = document.getElementById("menuHeader");
+    const menuToolbar = document.getElementById("menuToolbar");
+    const zodiacTabs = document.getElementById("zodiacTabs");
+    const navButtons = [...document.querySelectorAll(".nb-nav-item")];
+    const sectionByName = {
+      food: document.getElementById("foodPanel"),
+      tables: document.getElementById("tablePanel"),
+      bill: document.getElementById("billPanel"),
+      voucher: document.getElementById("voucherPanel"),
+      account: document.getElementById("accountPanel"),
+      about: document.getElementById("aboutPanel")
+    };
+
+    function row(values) {
+      return `<tr>${values.map((v) => `<td>${v ?? ""}</td>`).join("")}</tr>`;
+    }
+    function renderRows(id, items, mapFn, colSpan) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (!items || items.length === 0) {
+        el.innerHTML = `<tr><td colspan="${colSpan}">Không có dữ liệu</td></tr>`;
+        return;
+      }
+      el.innerHTML = items.map((item) => row(mapFn(item))).join("");
+    }
+    async function getJson(path) {
+      try {
+        const res = await fetch(apiUrl(path));
+        if (!res.ok) return null;
+        return await res.json();
+      } catch {
+        return null;
+      }
+    }
+
+    async function requestJson(path, options = {}) {
+      const res = await fetch(apiUrl(path), options);
+      const text = await res.text();
+      const payload = text ? JSON.parse(text) : {};
+      if (!res.ok) {
+        const message = payload.error || payload.message || `HTTP ${res.status}`;
+        throw new Error(message);
+      }
+      return payload;
+    }
+
+    function showToast(message, isError = false) {
+      toastBox.textContent = message;
+      toastBox.hidden = false;
+      toastBox.classList.toggle("error", isError);
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => {
+        toastBox.hidden = true;
+      }, 2400);
+    }
+
+    function showSection(name) {
+      const isMenuPage = name === "food";
+      navButtons.forEach((b) => b.classList.toggle("is-active", b.dataset.section === name));
+      Object.entries(sectionByName).forEach(([key, el]) => {
+        if (!el) return;
+        el.hidden = key !== name;
+      });
+      if (menuHeader) {
+        menuHeader.hidden = !isMenuPage;
+      }
+      if (menuToolbar) {
+        menuToolbar.hidden = !isMenuPage;
+      }
+      if (zodiacTabs) {
+        zodiacTabs.hidden = !isMenuPage;
+      }
+      document.getElementById("mainFoodSection").classList.toggle("is-food", isMenuPage);
+    }
+
+    navButtons.forEach((b) => {
+      b.addEventListener("click", () => {
+        const targetSection = b.dataset.section;
+        showSection(targetSection);
+        if (targetSection === "tables") {
+          if (!floorHost.children.length) {
+            loadFloors();
+          } else {
+            loadTables();
+          }
+        }
+      });
+    });
+
+    document.querySelectorAll("[data-goto]").forEach((btn) => {
+      btn.addEventListener("click", () => showSection(btn.getAttribute("data-goto")));
+    });
+
+    const zodiacs = [
+      { key: "Aries", label: "Bạch Dương" },
+      { key: "Taurus", label: "Kim Ngưu" },
+      { key: "Gemini", label: "Song Tử" },
+      { key: "Cancer", label: "Cự Giải" },
+      { key: "Leo", label: "Sư Tử" },
+      { key: "Virgo", label: "Xử Nữ" },
+      { key: "Libra", label: "Thiên Bình" },
+      { key: "Scorpio", label: "Bọ Cạp" },
+      { key: "Sagittarius", label: "Nhân Mã" },
+      { key: "Capricorn", label: "Ma Kết" },
+      { key: "Aquarius", label: "Bảo Bình" },
+      { key: "Pisces", label: "Song Ngư" }
+    ];
+    const zodiacHost = document.getElementById("zodiacTabs");
+    let currentZodiac = "Scorpio";
+    zodiacs.forEach((z) => {
+      const btn = document.createElement("button");
+      btn.className = `chip ${z.key === currentZodiac ? "is-active" : ""}`;
+      btn.textContent = z.label;
+      btn.addEventListener("click", () => {
+        currentZodiac = z.key;
+        [...zodiacHost.children].forEach((x) => x.classList.toggle("is-active", x.textContent === z.label));
+        document.getElementById("menuPath").textContent = `Menu/${z.key} - ${z.label}`;
+        loadFood();
+      });
+      zodiacHost.appendChild(btn);
+    });
+
+    const floorHost = document.getElementById("floorTabs");
+    let currentFloor = "Tầng 1";
+    async function loadFloors() {
+      const allTablesData = await getJson("/api/tables");
+      const allTables = allTablesData?.items || [];
+      const uniqueFloors = [...new Set(allTables.map(t => t.floor).filter(Boolean))];
+      
+      const floorsToUse = uniqueFloors.length > 0 ? uniqueFloors : ["Tầng 1"];
+      currentFloor = floorsToUse[0];
+      
+      floorHost.innerHTML = "";
+      floorsToUse.forEach((f) => {
+      const btn = document.createElement("button");
+      btn.className = `chip ${f === currentFloor ? "is-active" : ""}`;
+      btn.textContent = f;
+      btn.addEventListener("click", () => {
+        currentFloor = f;
+        [...floorHost.children].forEach((x) => x.classList.toggle("is-active", x.textContent === f));
+        loadTables();
+      });
+      floorHost.appendChild(btn);
+      });
+      
+      await loadTables();
+    }
+
+    let currentCustomer = null;
+    let currentUnpaidBillId = null;
+    let pendingPaymentBillId = null;
+    let currentDetailBillId = null;
+    let currentTableId = null;
+    let billHistoryCache = [];
+    let voucherCache = [];
+    const quantityByDish = new Map();
+    const redeemedVoucherStorageKey = "rtd.redeemedVouchers";
+    const redeemedVoucherCodes = new Set();
+
+    function loadRedeemedVoucherCodes() {
+      redeemedVoucherCodes.clear();
+      try {
+        const raw = sessionStorage.getItem(redeemedVoucherStorageKey);
+        const items = raw ? JSON.parse(raw) : [];
+        if (Array.isArray(items)) {
+          items.forEach((code) => {
+            const normalized = String(code || "").trim();
+            if (normalized) {
+              redeemedVoucherCodes.add(normalized);
+            }
+          });
+        }
+      } catch (_) {
+        // Ignore invalid storage and continue with empty set.
+      }
+    }
+
+    function persistRedeemedVoucherCodes() {
+      try {
+        sessionStorage.setItem(redeemedVoucherStorageKey, JSON.stringify([...redeemedVoucherCodes]));
+      } catch (_) {
+        // Ignore storage errors.
+      }
+    }
+
+    function rememberRedeemedVoucher(code) {
+      const normalized = String(code || "").trim();
+      if (!normalized) {
+        return;
+      }
+      redeemedVoucherCodes.add(normalized);
+      persistRedeemedVoucherCodes();
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function updateOrderHint() {
+      if (!currentTableId) {
+        selectedTableText.textContent = "Chưa đặt bàn";
+        return;
+      }
+      selectedTableText.textContent = `Bàn #${currentTableId}`;
+    }
+
+    function formatCurrency(value) {
+      return `${Number(value || 0).toLocaleString("vi-VN")}đ`;
+    }
+
+    function formatDateDisplay(dateText) {
+      if (!dateText) return "--";
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateText)) {
+        const [y, m, d] = dateText.split("-");
+        return `${d}-${m}-${y}`;
+      }
+      return dateText;
+    }
+
+    function renderBillHistoryRows() {
+      const searchText = String(document.getElementById("billSearch")?.value || "").trim().toLowerCase();
+      const statusFilter = String(document.getElementById("billStatusFilter")?.value || "all").toLowerCase();
+
+      const filtered = billHistoryCache.filter((bill) => {
+        const normalizedStatus = String(bill.status || "").toLowerCase();
+        if (statusFilter === "paid" && !normalizedStatus.includes("da thanh")) {
+          return false;
+        }
+        if (statusFilter === "unpaid" && !normalizedStatus.includes("chua thanh") && !normalizedStatus.includes("chưa thanh")) {
+          return false;
+        }
+
+        if (!searchText) {
+          return true;
+        }
+
+        return [
+          bill.id,
+          formatDateDisplay(bill.date),
+          bill.voucherCode || "",
+          formatCurrency(bill.mealTotal),
+          formatCurrency(bill.discount),
+          formatCurrency(bill.total)
+        ].join(" ").toLowerCase().includes(searchText);
+      });
+
+      renderRows("billRows", filtered, (b) => [
+        b.id,
+        formatDateDisplay(b.date),
+        formatCurrency(b.mealTotal),
+        b.voucherCode || "",
+        formatCurrency(b.discount),
+        formatCurrency(b.total),
+        renderBillStatusText(b),
+        renderBillActionButton(b)
+      ], 8);
+
+      document.querySelectorAll("[data-pay-bill]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const billId = Number(btn.getAttribute("data-pay-bill"));
+          openPaymentMethodModal(billId);
+        });
+      });
+
+      document.querySelectorAll("[data-view-bill]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const billId = Number(btn.getAttribute("data-view-bill"));
+          openPaymentMethodModal(billId, true);
+        });
+      });
+    }
+
+    function renderBillStatusText(bill) {
+      const status = String(bill.status || "").toLowerCase();
+      if (status.includes("da thanh")) {
+        return "Đã thanh toán";
+      }
+      if (String(bill.paymentRequestStatus || "").toLowerCase() === "pending") {
+        return "Chờ admin xác nhận";
+      }
+      if (String(bill.paymentRequestStatus || "").toLowerCase() === "approved") {
+        return "Đã thanh toán thành công";
+      }
+      return "Chưa thanh toán";
+    }
+
+    function renderBillActionButton(bill) {
+      const status = String(bill.status || "").toLowerCase();
+      if (status.includes("da thanh")) {
+        return `<button class="nb-row-pay-btn" data-view-bill="${escapeHtml(bill.id)}">Chi tiết</button>`;
+      }
+      if (String(bill.paymentRequestStatus || "").toLowerCase() === "pending") {
+        return `<button class="nb-row-pay-btn" data-view-bill="${escapeHtml(bill.id)}">Chi tiết</button>`;
+      }
+      return `
+        <button class="nb-row-pay-btn" data-view-bill="${escapeHtml(bill.id)}">Chi tiết</button>
+        <button class="nb-row-pay-btn" data-pay-bill="${escapeHtml(bill.id)}">Thanh toán</button>
+      `;
+    }
+
+    function getPayableBills() {
+      return billHistoryCache.filter((bill) => {
+        const status = String(bill.status || "").toLowerCase();
+        const requestStatus = String(bill.paymentRequestStatus || "").toLowerCase();
+        return (status.includes("chua thanh") || status.includes("chưa thanh")) && requestStatus !== "pending";
+      });
+    }
+
+    function getRedeemedVouchers() {
+      return voucherCache.filter((v) => redeemedVoucherCodes.has(String(v.code || "").trim()));
+    }
+
+    function refreshPaymentModalData(preferredBillId = null) {
+      if (!payVoucherSelect) {
+        return;
+      }
+
+      const bills = [...billHistoryCache];
+      const selectedBillId = Number(preferredBillId || currentDetailBillId || pendingPaymentBillId || currentUnpaidBillId || 0);
+      const selectedBill = bills.find((x) => Number(x.id) === selectedBillId) || bills.find((x) => Number(x.id) === Number(currentUnpaidBillId)) || bills[0] || null;
+      currentDetailBillId = selectedBill ? Number(selectedBill.id) : null;
+      pendingPaymentBillId = currentDetailBillId;
+
+      const vouchers = getRedeemedVouchers();
+      payVoucherSelect.innerHTML = '<option value="">Không áp dụng voucher</option>' + vouchers.map((v) => {
+        return `<option value="${escapeHtml(v.code)}">${escapeHtml(v.code)} - ${escapeHtml(v.description || "")}</option>`;
+      }).join("");
+
+      if (selectedBill?.voucherCode && vouchers.some((v) => String(v.code) === String(selectedBill.voucherCode))) {
+        payVoucherSelect.value = String(selectedBill.voucherCode);
+      } else {
+        payVoucherSelect.value = "";
+      }
+
+      updatePaymentDetailView();
+      syncPaymentActionState();
+    }
+
+    function updatePaymentDetailView() {
+      const billId = Number(currentDetailBillId || pendingPaymentBillId || currentUnpaidBillId || 0);
+      currentDetailBillId = billId || null;
+      const bill = billHistoryCache.find((x) => Number(x.id) === billId);
+      if (!bill) {
+        payBillDateText.textContent = "--";
+        payBillIdText.textContent = "--";
+        payBillStatusText.textContent = "--";
+        payBillMealTotalText.textContent = "0đ";
+        payBillDiscountText.textContent = "0đ";
+        payBillTotalText.textContent = "0đ";
+        payBillTableText.textContent = "--";
+        renderPaymentBillItems([]);
+        syncPaymentActionState();
+        return;
+      }
+      payBillDateText.textContent = formatDateDisplay(bill.date);
+      payBillIdText.textContent = `#${bill.id}`;
+      payBillStatusText.textContent = renderBillStatusText(bill);
+      payBillMealTotalText.textContent = formatCurrency(bill.mealTotal);
+      payBillDiscountText.textContent = formatCurrency(bill.discount);
+      payBillTotalText.textContent = formatCurrency(bill.total);
+      payBillTableText.textContent = bill.tableId ? `#${bill.tableId}` : "--";
+      loadPaymentBillItems(bill.id);
+      syncPaymentActionState();
+    }
+
+    function renderPaymentBillItems(items) {
+      if (!payBillItemsBody) return;
+      if (!items || items.length === 0) {
+        payBillItemsBody.innerHTML = '<tr><td colspan="3">Không có món trong hóa đơn</td></tr>';
+        return;
+      }
+      payBillItemsBody.innerHTML = items.map((item) => `
+        <tr>
+          <td>${escapeHtml(item.dishName || "")}</td>
+          <td>${escapeHtml(item.quantity)}</td>
+          <td>${formatCurrency(item.total)}</td>
+        </tr>
+      `).join("");
+    }
+
+    async function loadPaymentBillItems(billId) {
+      if (!billId) {
+        renderPaymentBillItems([]);
+        return;
+      }
+      const data = await getJson(`/api/bill-items?billId=${encodeURIComponent(billId)}`);
+      renderPaymentBillItems(data?.items || []);
+    }
+
+    function syncPaymentActionState() {
+      const bill = billHistoryCache.find((x) => Number(x.id) === Number(currentDetailBillId || pendingPaymentBillId || currentUnpaidBillId || 0));
+      const payable = bill && (String(bill.status || "").toLowerCase().includes("chua thanh") || String(bill.status || "").toLowerCase().includes("chưa thanh")) && String(bill.paymentRequestStatus || "").toLowerCase() !== "pending";
+      if (confirmPayBtn) {
+        confirmPayBtn.disabled = !payable;
+      }
+      if (applyVoucherBtn) {
+        applyVoucherBtn.disabled = !bill || !payable || !!String(bill.voucherCode || "").trim();
+      }
+    }
+
+    async function applyVoucherToBill(billId, voucherCode) {
+      if (!billId || !voucherCode) {
+        return;
+      }
+      await requestJson("/api/bills", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          billId,
+          action: "apply-voucher",
+          voucherCode
+        })
+      });
+    }
+
+    async function exchangeVoucher(code) {
+      const voucherCode = String(code || "").trim();
+      if (!voucherCode) {
+        return;
+      }
+
+      const billId = await ensureUnpaidBill();
+      if (!billId) {
+        throw new Error("Không tìm thấy hóa đơn chưa thanh toán để áp dụng voucher.");
+      }
+
+      await applyVoucherToBill(billId, voucherCode);
+      rememberRedeemedVoucher(voucherCode);
+      showToast(`Đã áp dụng voucher ${voucherCode} cho hóa đơn #${billId}.`);
+      await loadAccountAndBills();
+      await loadVouchers();
+    }
+
+    async function ensureCustomerContext() {
+      if (currentCustomer?.id) {
+        return currentCustomer;
+      }
+      await loadAccountAndBills();
+      if (!currentCustomer?.id) {
+        throw new Error("Không tìm thấy thông tin khách hàng. Vui lòng đăng nhập lại.");
+      }
+      return currentCustomer;
+    }
+
+    async function ensureUnpaidBill() {
+      const customer = await ensureCustomerContext();
+      if (!currentTableId) {
+        throw new Error("Vui lòng đặt bàn trước khi đặt món.");
+      }
+
+      if (currentUnpaidBillId) {
+        const currentUnpaidBill = billHistoryCache.find((x) => Number(x.id) === Number(currentUnpaidBillId));
+        if (String(currentUnpaidBill?.paymentRequestStatus || "").toLowerCase() === "pending") {
+          throw new Error("Hóa đơn hiện tại đang chờ admin xác nhận thanh toán.");
+        }
+        return currentUnpaidBillId;
+      }
+
+      try {
+        const created = await requestJson("/api/bills", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ customerId: customer.id, tableId: currentTableId })
+        });
+        currentUnpaidBillId = created.id;
+        return currentUnpaidBillId;
+      } catch (error) {
+        if (String(error.message || "").toLowerCase().includes("method not allowed")) {
+          const createdByPut = await requestJson("/api/bills", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "create", customerId: customer.id, tableId: currentTableId })
+          });
+          currentUnpaidBillId = createdByPut.id;
+          return currentUnpaidBillId;
+        }
+        const unpaid = await getJson(`/api/bills?customerId=${encodeURIComponent(customer.id)}&unpaidOnly=true`);
+        const bill = unpaid?.items?.[0];
+        if (bill?.id) {
+          currentUnpaidBillId = bill.id;
+          return currentUnpaidBillId;
+        }
+        throw error;
+      }
+    }
+
+    async function loadFood() {
+      const searchText = String(document.getElementById("foodSearch").value || "").trim().toLowerCase();
+      const sortType = document.getElementById("foodSort").value;
+      const data = await getJson(`/api/dishes?type=${encodeURIComponent(currentZodiac)}`);
+      const host = document.getElementById("foodGrid");
+      const items = data?.items || [];
+
+      const filtered = items
+        .filter((d) => String(d.name || "").toLowerCase().includes(searchText))
+        .sort((a, b) => {
+          if (sortType === "priceAsc") return Number(a.price || 0) - Number(b.price || 0);
+          if (sortType === "priceDesc") return Number(b.price || 0) - Number(a.price || 0);
+          if (sortType === "nameAsc") return String(a.name || "").localeCompare(String(b.name || ""), "vi");
+          return 0;
+        });
+
+      if (!items.length) {
+        host.innerHTML = "<div class=\"nb-empty\">Không có dữ liệu món ăn.</div>";
+        return;
+      }
+      if (!filtered.length) {
+        host.innerHTML = "<div class=\"nb-empty\">Không tìm thấy món phù hợp.</div>";
+        return;
+      }
+
+      host.innerHTML = filtered.map((d) => {
+        const qty = quantityByDish.get(Number(d.id)) || 0;
+        const disabled = !String(d.status || "").toLowerCase().includes("dang");
+        const imgUrl = apiUrl(`/api/dish-image?type=${encodeURIComponent(String(d.type || "Unknown"))}&id=${encodeURIComponent(String(d.id || ""))}`);
+        return `<article class="nb-food-card">
+          <div class="nb-food-thumb"><img src="${imgUrl}" alt="${escapeHtml(d.name)}" loading="lazy" /></div>
+          <h3>${escapeHtml(d.name)}</h3>
+          <p>${Number(d.price || 0).toLocaleString("vi-VN")}đ</p>
+          <div class="nb-qty">
+            <button class="nb-qty-btn" data-qty-minus="${escapeHtml(d.id)}">−</button>
+            <span id="qty-${escapeHtml(d.id)}">${qty}</span>
+            <button class="nb-qty-btn" data-qty-plus="${escapeHtml(d.id)}">+</button>
+          </div>
+          <button class="nb-add-btn" data-order-dish="${escapeHtml(d.id)}" ${disabled ? "disabled" : ""}>THÊM</button>
+        </article>`;
+      }).join("");
+
+      host.querySelectorAll("[data-qty-plus]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const dishId = Number(btn.getAttribute("data-qty-plus"));
+          const nextQty = (quantityByDish.get(dishId) || 0) + 1;
+          quantityByDish.set(dishId, nextQty);
+          document.getElementById(`qty-${dishId}`).textContent = String(nextQty);
+        });
+      });
+
+      host.querySelectorAll("[data-qty-minus]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const dishId = Number(btn.getAttribute("data-qty-minus"));
+          const nextQty = Math.max(0, (quantityByDish.get(dishId) || 0) - 1);
+          quantityByDish.set(dishId, nextQty);
+          document.getElementById(`qty-${dishId}`).textContent = String(nextQty);
+        });
+      });
+
+      host.querySelectorAll("[data-order-dish]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const dishId = Number(btn.getAttribute("data-order-dish"));
+          const quantity = quantityByDish.get(dishId) || 0;
+          if (quantity <= 0) {
+            showToast("Vui lòng chọn số lượng món trước khi thêm.", true);
+            return;
+          }
+          try {
+            const billId = await ensureUnpaidBill();
+            try {
+              await requestJson("/api/bill-items", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ billId, dishId, quantity })
+              });
+            } catch (postError) {
+              if (!String(postError.message || "").toLowerCase().includes("method not allowed")) {
+                throw postError;
+              }
+              await requestJson("/api/bill-items", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ billId, dishId, quantity })
+              });
+            }
+            showToast("Đặt món thành công.");
+            quantityByDish.set(dishId, 0);
+            await loadAccountAndBills();
+            await loadFood();
+          } catch (error) {
+            showToast(`Đặt món thất bại: ${error.message}`, true);
+            if (String(error.message || "").toLowerCase().includes("chọn bàn")) {
+              showSection("tables");
+              await loadFloors();
+            }
+          }
+        });
+      });
+    }
+
+    async function loadTables() {
+      const data = await getJson(`/api/tables?floor=${encodeURIComponent(currentFloor)}`);
+      // Fallback: nếu không có dữ liệu với floor, load all tables
+        let tableData = data;
+        if (!data?.items || data.items.length === 0) {
+          tableData = await getJson("/api/tables");
+        }
+        
+        const host = document.getElementById("tableCards");
+        const items = tableData?.items || [];
+      if (!items.length) {
+        host.innerHTML = "<div class=\"nb-empty\">Không có dữ liệu bàn.</div>";
+        return;
+      }
+
+      host.innerHTML = items.map((t) => {
+        const status = String(t.status || "");
+        const canReserve = status.toLowerCase().includes("con trong") || status.toLowerCase().includes("còn trống");
+        return `<article class="nb-table-card">
+          <h4>${escapeHtml(t.name)}</h4>
+          <p>${escapeHtml(t.floor)} • ${escapeHtml(t.status)}</p>
+          <div class="nb-table-actions">
+            <button class="table-action" data-reserve-table="${escapeHtml(t.id)}" ${canReserve ? "" : "disabled"}>Đặt bàn</button>
+          </div>
+        </article>`;
+      }).join("");
+
+      host.querySelectorAll("[data-reserve-table]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const tableId = Number(btn.getAttribute("data-reserve-table"));
+          try {
+            await requestJson("/api/tables", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ id: tableId, action: "reserve" })
+            });
+            currentTableId = tableId;
+            updateOrderHint();
+            showToast("Đặt bàn thành công.");
+            await loadFloors();
+            showSection("food");
+          } catch (error) {
+            showToast(`Đặt bàn thất bại: ${error.message}`, true);
+          }
+        });
+      });
+    }
+
+    async function loadVouchers() {
+      const data = await getJson("/api/vouchers");
+      voucherCache = data?.items || [];
+      renderVoucherCards();
+    }
+
+    function renderVoucherCards() {
+      if (!voucherCardGrid) {
+        return;
+      }
+
+      const searchText = String(voucherSearchInput?.value || "").trim().toLowerCase();
+      const filter = String(voucherFilterSelect?.value || "all").toLowerCase();
+      const points = Number(currentCustomer?.points || 0);
+
+      const filtered = voucherCache.filter((v) => {
+        const code = String(v.code || "").toLowerCase();
+        const desc = String(v.description || "").toLowerCase();
+        const type = String(v.typeMenu || "").toLowerCase();
+        const quantity = Number(v.quantity || 0);
+        const point = Number(v.point || 0);
+
+        if (filter === "affordable" && !(quantity > 0 && point <= points)) {
+          return false;
+        }
+        if (filter === "out" && quantity > 0) {
+          return false;
+        }
+        if (!searchText) {
+          return true;
+        }
+        return `${code} ${desc} ${type}`.includes(searchText);
+      });
+
+      if (!filtered.length) {
+        voucherCardGrid.innerHTML = '<div class="nb-empty">Không có voucher phù hợp.</div>';
+        return;
+      }
+
+      voucherCardGrid.innerHTML = filtered.map((v) => {
+        const canExchange = Number(v.quantity || 0) > 0 && Number(v.point || 0) <= points;
+        const percent = Number(v.percent || 0);
+        const btn = canExchange
+          ? `<button class="nb-voucher-btn" data-exchange-voucher="${escapeHtml(v.code)}">ĐỔI VOUCHER</button>`
+          : `<button class="nb-voucher-btn" disabled>KHÔNG KHẢ DỤNG</button>`;
+        return `<article class="nb-voucher-card">
+          <div class="nb-voucher-banner">${percent}% OFF</div>
+          <img class="nb-voucher-image" src="/api/voucher-image?percent=${encodeURIComponent(String(percent || 20))}" alt="Voucher ${percent}%" loading="lazy" />
+          <div class="nb-voucher-content">
+            <h3>${escapeHtml(v.description || v.code || "Voucher")}</h3>
+            <p>Số lượng: ${Number(v.quantity || 0)}</p>
+            <p>${Number(v.point || 0).toLocaleString("vi-VN")} xu</p>
+            ${btn}
+          </div>
+        </article>`;
+      }).join("");
+
+      voucherCardGrid.querySelectorAll("[data-exchange-voucher]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const code = btn.getAttribute("data-exchange-voucher");
+          try {
+            btn.setAttribute("disabled", "disabled");
+            await exchangeVoucher(code);
+          } catch (error) {
+            showToast(`Đổi voucher thất bại: ${error.message}`, true);
+          } finally {
+            btn.removeAttribute("disabled");
+          }
+        });
+      });
+    }
+
+    async function loadAccountAndBills() {
+      document.getElementById("accEmail").textContent = email || "--";
+      document.getElementById("accRole").textContent = role || "Khách Hàng";
+      document.getElementById("accUserId").textContent = userId || "--";
+      if (!userId) {
+        document.getElementById("accCustomerId").textContent = "--";
+        document.getElementById("accName").textContent = "--";
+        document.getElementById("accJoinedDate").textContent = "--";
+        document.getElementById("accSales").textContent = "0đ";
+        document.getElementById("accPoint").textContent = "0 xu";
+        document.getElementById("voucherPoint").textContent = "0 xu";
+        document.getElementById("billRevenue").textContent = "0đ";
+        if (unpaidBillInfo) {
+          unpaidBillInfo.textContent = "Không có hóa đơn chưa thanh toán";
+        }
+        billHistoryCache = [];
+        renderBillHistoryRows();
+        return;
+      }
+
+      const customerRes = await getJson(`/api/customers?userId=${encodeURIComponent(userId)}`);
+      const customer = customerRes?.customer;
+      currentCustomer = customer || null;
+      document.getElementById("accName").textContent = customer?.name || "--";
+      document.getElementById("accCustomerId").textContent = customer?.id || "--";
+      document.getElementById("accJoinedDate").textContent = formatDateDisplay(customer?.joinedDate);
+      document.getElementById("accSales").textContent = formatCurrency(customer?.sales || 0);
+      document.getElementById("accPoint").textContent = `${Number(customer?.points || 0).toLocaleString("vi-VN")} xu`;
+      document.getElementById("voucherPoint").textContent = `${Number(customer?.points || 0).toLocaleString("vi-VN")} xu`;
+
+      if (!customer?.id) {
+        billHistoryCache = [];
+        document.getElementById("billRevenue").textContent = "0đ";
+        if (unpaidBillInfo) {
+          unpaidBillInfo.textContent = "Không có hóa đơn chưa thanh toán";
+        }
+        renderBillHistoryRows();
+        return;
+      }
+      const billRes = await getJson(`/api/bills?customerId=${encodeURIComponent(customer.id)}`);
+      const bills = billRes?.items || [];
+      bills.forEach((bill) => {
+        const voucherCode = String(bill?.voucherCode || "").trim();
+        if (voucherCode) {
+          rememberRedeemedVoucher(voucherCode);
+        }
+      });
+      const unpaid = bills.find((x) => String(x.status || "").toLowerCase().includes("chua thanh") || String(x.status || "").toLowerCase().includes("chưa thanh"));
+      currentUnpaidBillId = unpaid?.id || null;
+      if (unpaidBillInfo) {
+        if (!unpaid) {
+          unpaidBillInfo.textContent = "Không có hóa đơn chưa thanh toán";
+        } else if (String(unpaid.paymentRequestStatus || "").toLowerCase() === "pending") {
+          unpaidBillInfo.textContent = `Hóa đơn #${unpaid.id} đang chờ admin xác nhận thanh toán.`;
+        } else {
+          unpaidBillInfo.textContent = `Hóa đơn chưa thanh toán: #${unpaid.id}`;
+        }
+      }
+
+      billHistoryCache = bills;
+      const revenue = bills.reduce((sum, bill) => sum + Number(bill.total || 0), 0);
+      document.getElementById("billRevenue").textContent = formatCurrency(revenue);
+      renderBillHistoryRows();
+      renderVoucherCards();
+      refreshPaymentModalData(currentUnpaidBillId);
+
+      if (!currentTableId && unpaid?.tableId) {
+        currentTableId = Number(unpaid.tableId);
+      }
+      updateOrderHint();
+    }
+
+    async function payCurrentBill() {
+      const selectedBillId = Number(currentDetailBillId || pendingPaymentBillId || currentUnpaidBillId || 0);
+      if (!selectedBillId) {
+        showToast("Không có hóa đơn cần thanh toán.", true);
+        return false;
+      }
+      pendingPaymentBillId = selectedBillId;
+
+      const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || "cash";
+      const methodLabelMap = {
+        cash: "Tiền mặt",
+        card: "Thẻ ngân hàng",
+        transfer: "Chuyển khoản"
+      };
+      const methodLabel = methodLabelMap[selectedMethod] || "Tiền mặt";
+
+      try {
+        await requestJson("/api/bills", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            billId: selectedBillId,
+            customerId: currentCustomer?.id,
+            action: "request-pay",
+            paymentMethod: selectedMethod
+          })
+        });
+        showToast(`Đã gửi yêu cầu thanh toán hóa đơn #${selectedBillId} (${methodLabel}). Chờ admin xác nhận.`);
+        await loadAccountAndBills();
+        await loadVouchers();
+        return true;
+      } catch (error) {
+        showToast(`Thanh toán thất bại: ${error.message}`, true);
+        return false;
+      }
+    }
+
+    function openPaymentMethodModal(billId, isDetailMode = false) {
+      const targetBillId = Number(billId || 0);
+      const payableBills = getPayableBills();
+      if (!targetBillId && !payableBills.length) {
+        showToast("Không có hóa đơn cần thanh toán.", true);
+        return;
+      }
+      pendingPaymentBillId = targetBillId || Number(currentUnpaidBillId || payableBills[0]?.id || 0);
+      currentDetailBillId = targetBillId || pendingPaymentBillId;
+      refreshPaymentModalData(currentDetailBillId || pendingPaymentBillId);
+      if (paymentMethodModal) {
+        paymentMethodModal.hidden = false;
+      }
+    }
+
+    function closePaymentMethodModal() {
+      pendingPaymentBillId = null;
+      if (paymentMethodModal) {
+        paymentMethodModal.hidden = true;
+      }
+    }
+
+    async function confirmPayCurrentBill() {
+      if (confirmPayBtn) {
+        confirmPayBtn.disabled = true;
+      }
+      const paid = await payCurrentBill();
+      if (confirmPayBtn) {
+        confirmPayBtn.disabled = false;
+      }
+      if (paid) {
+        closePaymentMethodModal();
+      }
+    }
+
+    async function applySelectedVoucherToCurrentBill() {
+      const selectedBillId = Number(currentDetailBillId || pendingPaymentBillId || currentUnpaidBillId || 0);
+      const selectedVoucher = String(payVoucherSelect?.value || "").trim();
+      if (!selectedBillId) {
+        showToast("Không có hóa đơn để áp dụng voucher.", true);
+        return;
+      }
+      const bill = billHistoryCache.find((x) => Number(x.id) === selectedBillId);
+      const billStatus = String(bill?.status || "").toLowerCase();
+      if (!bill || (!billStatus.includes("chua thanh") && !billStatus.includes("chưa thanh"))) {
+        showToast("Chỉ có thể áp dụng voucher cho hóa đơn chưa thanh toán.", true);
+        return;
+      }
+      if (String(bill.voucherCode || "").trim()) {
+        showToast(`Hóa đơn này đã áp dụng voucher ${bill.voucherCode}.`, true);
+        return;
+      }
+      if (!selectedVoucher) {
+        showToast("Vui lòng chọn voucher cần áp dụng.", true);
+        return;
+      }
+      await applyVoucherToBill(selectedBillId, selectedVoucher);
+      showToast(`Đã áp dụng voucher ${selectedVoucher} cho hóa đơn #${selectedBillId}.`);
+      await loadAccountAndBills();
+      await loadVouchers();
+      refreshPaymentModalData(selectedBillId);
+    }
+
+    loadRedeemedVoucherCodes();
+    loadFood();
+    loadFloors();
+    loadVouchers();
+    loadAccountAndBills();
+    showSection("food");
+    setInterval(() => {
+      loadAccountAndBills();
+    }, 7000);
+
+    document.getElementById("foodSearch").addEventListener("input", loadFood);
+    document.getElementById("foodSort").addEventListener("change", loadFood);
+    document.getElementById("billSearch")?.addEventListener("input", renderBillHistoryRows);
+    document.getElementById("billStatusFilter")?.addEventListener("change", renderBillHistoryRows);
+    voucherSearchInput?.addEventListener("input", renderVoucherCards);
+    voucherFilterSelect?.addEventListener("change", renderVoucherCards);
+    cancelPayBtn?.addEventListener("click", closePaymentMethodModal);
+    confirmPayBtn?.addEventListener("click", confirmPayCurrentBill);
+    applyVoucherBtn?.addEventListener("click", applySelectedVoucherToCurrentBill);
+    document.getElementById("closePayModalBtn")?.addEventListener("click", closePaymentMethodModal);
+    paymentMethodModal?.addEventListener("click", (event) => {
+      if (event.target === paymentMethodModal) {
+        closePaymentMethodModal();
+      }
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && paymentMethodModal && !paymentMethodModal.hidden) {
+        closePaymentMethodModal();
+      }
+    });
+  </script>
+</body>
+</html>

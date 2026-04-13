@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Royal Warehouse</title>
+  <link rel="stylesheet" href="/portal.css?v=20260412-role-1" />
+</head>
+<body class="role-page warehouse-role">
+  <main class="role-shell">
+    <aside class="role-sidebar">
+      <div class="role-brand">
+        <div class="brand-avatar">W</div>
+        <div>
+          <p class="brand-title">Royal Warehouse</p>
+          <p class="brand-sub">Kho và xuất nhập</p>
+        </div>
+      </div>
+
+      <nav class="role-menu">
+        <button class="menu-item is-active" data-section="ingredient">Quản lý Nguyên liệu</button>
+        <button class="menu-item" data-section="warehouse">Thông tin Kho</button>
+        <button class="menu-item" data-section="import">Quản lý Nhập Kho</button>
+        <button class="menu-item" data-section="export">Quản lý Xuất Kho</button>
+        <button class="menu-item" data-section="account">Tài khoản</button>
+      </nav>
+
+      <div class="sidebar-actions">
+        <a href="/">Đăng xuất</a>
+      </div>
+    </aside>
+
+    <section class="role-content">
+      <header class="role-topbar">
+        <div>
+          <h1 id="sectionTitle">Quản lý Nguyên liệu</h1>
+          <p id="welcomeText">Xin chào nhân viên kho.</p>
+        </div>
+      </header>
+
+      <section class="role-section is-visible" data-section="ingredient">
+        <article class="panel-block">
+          <div class="panel-head">
+            <h2>Danh sách Nguyên liệu</h2>
+            <button class="btn-primary" onclick="openIngredientForm()">+ Thêm Nguyên Liệu</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>ID</th><th>Tên NL</th><th>Đơn vị tính</th><th>Đơn giá</th><th>Hành động</th></tr>
+              </thead>
+              <tbody id="ingredientRows"><tr><td colspan="5">Đang tải...</td></tr></tbody>
+            </table>
+          </div>
+
+          <div id="ingredientFormModal" class="modal" style="display: none;">
+            <div class="modal-content">
+              <div class="modal-head">
+                <h3 id="ingredientFormTitle">Thêm Nguyên Liệu Mới</h3>
+                <button class="btn-close" onclick="closeIngredientForm()">&times;</button>
+              </div>
+              <form onsubmit="submitIngredientForm(event)">
+                <div class="form-group">
+                  <label>Tên Nguyên Liệu</label>
+                  <input type="text" id="ingredientName" required />
+                </div>
+                <div class="form-group">
+                  <label>Đơn vị tính</label>
+                  <input type="text" id="ingredientUnit" placeholder="VD: kg, lít, cái..." required />
+                </div>
+                <div class="form-group">
+                  <label>Đơn Giá (VND)</label>
+                  <input type="number" id="ingredientPrice" min="0" step="1000" required />
+                </div>
+                <div class="form-actions">
+                  <button type="submit" class="btn-success">Lưu</button>
+                  <button type="button" class="btn-cancel" onclick="closeIngredientForm()">Hủy</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="role-section" data-section="warehouse">
+        <div class="metric-grid metric-grid-3">
+          <article class="metric-card"><p>Tổng Nguyên liệu</p><h3 id="mIngredient">0</h3></article>
+          <article class="metric-card"><p>Tổng giá trị danh mục</p><h3 id="mValue">0 VND</h3></article>
+          <article class="metric-card"><p>Số phiếu nhập</p><h3 id="mImport">0</h3></article>
+        </div>
+        <article class="panel-block">
+          <div class="panel-head"><h2>Danh sách nguyên liệu trong kho</h2></div>
+          <div class="admin-bill-tools">
+            <label class="admin-bill-search-wrap">
+              <span>🔍</span>
+              <input id="warehouseSearch" type="text" placeholder="Tìm theo mã, tên, đơn vị..." />
+            </label>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Mã NL</th><th>Tên nguyên liệu</th><th>Đơn vị tính</th><th>Số lượng tồn</th></tr>
+              </thead>
+              <tbody id="warehouseRows"><tr><td colspan="4">Đang tải...</td></tr></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="role-section" data-section="import">
+        <article class="panel-block">
+          <div class="panel-head"><h2>Danh sách Phiếu Nhập Kho</h2><button class="btn-primary" onclick="openImportForm()">+ Thêm Phiếu Nhập</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>ID NK</th><th>ID NV</th><th>Ngày nhập</th><th>Tổng tiền</th><th>Hành động</th></tr>
+              </thead>
+              <tbody id="importRows"><tr><td colspan="5">Đang tải...</td></tr></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="role-section" data-section="export">
+        <article class="panel-block">
+          <div class="panel-head"><h2>Danh sách Phiếu Xuất Kho</h2><button class="btn-primary" onclick="openExportForm()">+ Thêm Phiếu Xuất</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>ID XK</th><th>ID NV</th><th>Ngày xuất</th><th>Hành động</th></tr>
+              </thead>
+              <tbody id="exportRows"><tr><td colspan="4">Đang tải...</td></tr></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="role-section" data-section="account">
+        <article class="panel-block">
+          <div class="panel-head"><h2>Thông tin tài khoản</h2></div>
+          <div class="detail-grid">
+            <div><span>Email</span><strong id="accEmail">--</strong></div>
+            <div><span>Role</span><strong id="accRole">Nhân Viên Kho</strong></div>
+            <div><span>User ID</span><strong id="accUserId">--</strong></div>
+          </div>
+        </article>
+      </section>
+    </section>
+  </main>
+
+  <div id="importDetailModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-head">
+        <h3 id="importDetailTitle">Chi tiết Phiếu Nhập Kho</h3>
+        <button class="btn-close" onclick="closeImportDetailModal()">&times;</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>ID NL</th><th>Tên nguyên liệu</th><th>Số lượng</th><th>Thành tiền</th></tr>
+          </thead>
+          <tbody id="importDetailRows"><tr><td colspan="4">Chưa có dữ liệu</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="exportDetailModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-head">
+        <h3 id="exportDetailTitle">Chi tiết Phiếu Xuất Kho</h3>
+        <button class="btn-close" onclick="closeExportDetailModal()">&times;</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>ID NL</th><th>Tên nguyên liệu</th><th>Số lượng</th></tr>
+          </thead>
+          <tbody id="exportDetailRows"><tr><td colspan="3">Chưa có dữ liệu</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="importFormModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-head">
+        <h3>Thêm Phiếu Nhập Kho</h3>
+        <button class="btn-close" onclick="closeImportForm()">&times;</button>
+      </div>
+      <form onsubmit="submitImportForm(event)">
+        <div class="form-group">
+          <label>ID Nhân viên</label>
+          <input type="number" id="importStaffId" min="1" required />
+        </div>
+        <div class="form-group">
+          <label>Ngày nhập</label>
+          <input type="date" id="importDate" required />
+        </div>
+        <div class="form-group">
+          <label>Chi tiết nguyên liệu</label>
+          <div id="importDetailLines"></div>
+          <button type="button" class="btn-edit" onclick="addImportDetailLine()">+ Thêm dòng nguyên liệu</button>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-success">Lưu</button>
+          <button type="button" class="btn-cancel" onclick="closeImportForm()">Hủy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="exportFormModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-head">
+        <h3>Thêm Phiếu Xuất Kho</h3>
+        <button class="btn-close" onclick="closeExportForm()">&times;</button>
+      </div>
+      <form onsubmit="submitExportForm(event)">
+        <div class="form-group">
+          <label>ID Nhân viên</label>
+          <input type="number" id="exportStaffId" min="1" required />
+        </div>
+        <div class="form-group">
+          <label>Ngày xuất</label>
+          <input type="date" id="exportDate" required />
+        </div>
+        <div class="form-group">
+          <label>Chi tiết nguyên liệu</label>
+          <div id="exportDetailLines"></div>
+          <button type="button" class="btn-edit" onclick="addExportDetailLine()">+ Thêm dòng nguyên liệu</button>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-success">Lưu</button>
+          <button type="button" class="btn-cancel" onclick="closeExportForm()">Hủy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function getAuthContext(defaultRole) {
+      let auth = null;
+      try {
+        auth = JSON.parse(sessionStorage.getItem("rtd.auth") || "null");
+      } catch (_) {
+        auth = null;
+      }
+
+      if (auth && (auth.email || auth.userId || auth.role)) {
+        return auth;
+      }
+
+      const query = new URLSearchParams(window.location.search);
+      const legacy = {
+        email: query.get("email") || "",
+        userId: query.get("userId") || "",
+        role: query.get("role") || defaultRole
+      };
+      if (legacy.email || legacy.userId || query.get("role")) {
+        try {
+          sessionStorage.setItem("rtd.auth", JSON.stringify(legacy));
+        } catch (_) {
+          // Ignore storage errors.
+        }
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      return legacy;
+    }
+
+    const authContext = getAuthContext("Nhân Viên Kho");
+    const email = authContext.email;
+    const userId = authContext.userId;
+    const role = authContext.role || "Nhân Viên Kho";
+    if (email) {
+      document.getElementById("welcomeText").textContent = `Xin chào nhân viên kho: ${email}`;
+      document.getElementById("accEmail").textContent = email;
+    }
+    document.getElementById("accRole").textContent = role;
+    document.getElementById("accUserId").textContent = userId || "--";
+
+    const sectionTitle = document.getElementById("sectionTitle");
+    const menuButtons = [...document.querySelectorAll(".menu-item")];
+    const sections = [...document.querySelectorAll(".role-section")];
+    const warehouseSearchInput = document.getElementById("warehouseSearch");
+    let currentIngredientId = null;
+    let ingredientCache = [];
+
+    const labels = {
+      ingredient: "Quản lý Nguyên liệu",
+      warehouse: "Thông tin Kho",
+      import: "Quản lý Nhập Kho",
+      export: "Quản lý Xuất Kho",
+      account: "Tài khoản"
+    };
+
+    function switchSection(name) {
+      menuButtons.forEach((x) => x.classList.toggle("is-active", x.dataset.section === name));
+      sections.forEach((x) => x.classList.toggle("is-visible", x.dataset.section === name));
+      sectionTitle.textContent = labels[name] || "Warehouse";
+    }
+    menuButtons.forEach((b) => b.addEventListener("click", () => switchSection(b.dataset.section)));
+
+    function row(values) {
+      return `<tr>${values.map((v) => `<td>${v ?? ""}</td>`).join("")}</tr>`;
+    }
+    function renderRows(id, items, mapFn, colSpan) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (!items || items.length === 0) {
+        el.innerHTML = `<tr><td colspan="${colSpan}">Không có dữ liệu</td></tr>`;
+        return;
+      }
+      el.innerHTML = items.map((item) => row(mapFn(item))).join("");
+    }
+    async function getJson(path) {
+      try {
+        const res = await fetch(path);
+        if (!res.ok) return null;
+        return await res.json();
+      } catch {
+        return null;
+      }
+    }
+
+    async function fetchWithMethod(url, method = "GET", body = null) {
+      try {
+        const opts = { method };
+        if (body) {
+          opts.headers = { "Content-Type": "application/json" };
+          opts.body = JSON.stringify(body);
+        }
+        const res = await fetch(url, opts);
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || `HTTP ${res.status}`);
+        }
+        return await res.json().catch(() => ({}));
+      } catch (err) {
+        alert(`Lỗi: ${err.message}`);
+        return null;
+      }
+    }
+
+    // ========== INGREDIENT CRUD ==========
+    function openIngredientForm() {
+      currentIngredientId = null;
+      document.getElementById("ingredientFormTitle").textContent = "Thêm Nguyên Liệu Mới";
+      document.getElementById("ingredientName").value = "";
+      document.getElementById("ingredientUnit").value = "";
+      document.getElementById("ingredientPrice").value = "";
+      document.getElementById("ingredientFormModal").style.display = "flex";
+    }
+
+    function closeIngredientForm() {
+      document.getElementById("ingredientFormModal").style.display = "none";
+    }
+
+    async function editIngredient(id) {
+      try {
+        const res = await getJson(`/api/ingredients?id=${id}`);
+        if (!res || !res.items || res.items.length === 0) {
+          alert("Không tìm thấy nguyên liệu");
+          return;
+        }
+        const ing = res.items[0];
+        currentIngredientId = id;
+        document.getElementById("ingredientFormTitle").textContent = `Sửa Nguyên Liệu #${id}`;
+        document.getElementById("ingredientName").value = ing.name || "";
+        document.getElementById("ingredientUnit").value = ing.unit || "";
+        document.getElementById("ingredientPrice").value = ing.price || "";
+        document.getElementById("ingredientFormModal").style.display = "flex";
+      } catch (err) {
+        alert("Lỗi khi tải dữ liệu");
+      }
+    }
+
+    async function submitIngredientForm(e) {
+      e.preventDefault();
+      const tenNL = document.getElementById("ingredientName").value.trim();
+      const dvt = document.getElementById("ingredientUnit").value.trim();
+      const donGia = parseInt(document.getElementById("ingredientPrice").value);
+
+      if (!tenNL || !dvt || donGia < 0) {
+        alert("Vui lòng nhập đầy đủ thông tin hợp lệ");
+        return;
+      }
+
+      const body = { tenNL, dvt, donGia, id: currentIngredientId };
+      const method = currentIngredientId ? "PUT" : "POST";
+      const result = await fetchWithMethod("/api/ingredients", method, body);
+      
+      if (result) {
+        alert(result.message || "Thành công");
+        closeIngredientForm();
+        loadAll();
+      }
+    }
+
+    async function deleteIngredient(id) {
+      if (!confirm("Xóa nguyên liệu này?")) return;
+      const result = await fetchWithMethod(`/api/ingredients?id=${id}`, "DELETE");
+      if (result) {
+        alert(result.message || "Xóa thành công");
+        loadAll();
+      }
+    }
+
+    function closeImportDetailModal() {
+      document.getElementById("importDetailModal").style.display = "none";
+    }
+
+    function closeExportDetailModal() {
+      document.getElementById("exportDetailModal").style.display = "none";
+    }
+
+    function getIngredientOptionsHtml() {
+      return ingredientCache
+        .map((x) => `<option value="${x.id}">${x.id} - ${x.name}</option>`)
+        .join("");
+    }
+
+    function addDetailLine(containerId, selectClass, qtyClass) {
+      const host = document.getElementById(containerId);
+      if (!host) return;
+      const line = document.createElement("div");
+      line.className = "detail-line";
+      line.style.display = "grid";
+      line.style.gridTemplateColumns = "2fr 1fr auto";
+      line.style.gap = "8px";
+      line.style.marginBottom = "8px";
+      line.innerHTML = `
+        <select class="${selectClass}" required>${getIngredientOptionsHtml()}</select>
+        <input type="number" class="${qtyClass}" min="1" value="1" required />
+        <button type="button" class="btn-delete">Xóa</button>
+      `;
+      line.querySelector(".btn-delete")?.addEventListener("click", () => {
+        line.remove();
+      });
+      host.appendChild(line);
+    }
+
+    function addImportDetailLine() {
+      addDetailLine("importDetailLines", "import-ingredient-select", "import-quantity-input");
+    }
+
+    function addExportDetailLine() {
+      addDetailLine("exportDetailLines", "export-ingredient-select", "export-quantity-input");
+    }
+
+    function collectDetailsPayload(containerId, selectClass, qtyClass) {
+      const host = document.getElementById(containerId);
+      if (!host) return "";
+      const lines = [...host.querySelectorAll(".detail-line")];
+      const parts = lines
+        .map((line) => {
+          const ingredientId = Number(line.querySelector(`.${selectClass}`)?.value || 0);
+          const quantity = Number(line.querySelector(`.${qtyClass}`)?.value || 0);
+          if (ingredientId <= 0 || quantity <= 0) return "";
+          return `${ingredientId}:${quantity}`;
+        })
+        .filter(Boolean);
+      return parts.join(",");
+    }
+
+    function openImportForm() {
+      document.getElementById("importStaffId").value = userId || "";
+      document.getElementById("importDate").value = new Date().toISOString().slice(0, 10);
+      document.getElementById("importDetailLines").innerHTML = "";
+      addImportDetailLine();
+      document.getElementById("importFormModal").style.display = "flex";
+    }
+
+    function closeImportForm() {
+      document.getElementById("importFormModal").style.display = "none";
+    }
+
+    function openExportForm() {
+      document.getElementById("exportStaffId").value = userId || "";
+      document.getElementById("exportDate").value = new Date().toISOString().slice(0, 10);
+      document.getElementById("exportDetailLines").innerHTML = "";
+      addExportDetailLine();
+      document.getElementById("exportFormModal").style.display = "flex";
+    }
+
+    function closeExportForm() {
+      document.getElementById("exportFormModal").style.display = "none";
+    }
+
+    async function submitImportForm(e) {
+      e.preventDefault();
+      const details = collectDetailsPayload("importDetailLines", "import-ingredient-select", "import-quantity-input");
+      const body = {
+        staffId: Number(document.getElementById("importStaffId").value || 0),
+        date: document.getElementById("importDate").value,
+        details
+      };
+      if (!details) {
+        alert("Vui lòng thêm ít nhất 1 dòng nguyên liệu hợp lệ.");
+        return;
+      }
+      const result = await fetchWithMethod("/api/import-receipts", "POST", body);
+      if (result) {
+        alert(result.message || "Tạo phiếu nhập thành công");
+        closeImportForm();
+        loadAll();
+      }
+    }
+
+    async function submitExportForm(e) {
+      e.preventDefault();
+      const details = collectDetailsPayload("exportDetailLines", "export-ingredient-select", "export-quantity-input");
+      const body = {
+        staffId: Number(document.getElementById("exportStaffId").value || 0),
+        date: document.getElementById("exportDate").value,
+        details
+      };
+      if (!details) {
+        alert("Vui lòng thêm ít nhất 1 dòng nguyên liệu hợp lệ.");
+        return;
+      }
+      const result = await fetchWithMethod("/api/export-receipts", "POST", body);
+      if (result) {
+        alert(result.message || "Tạo phiếu xuất thành công");
+        closeExportForm();
+        loadAll();
+      }
+    }
+
+    async function viewImportDetail(id) {
+      const res = await getJson(`/api/import-receipts?id=${id}`);
+      const receipt = res?.receipt;
+      if (!receipt) {
+        alert("Không tìm thấy phiếu nhập");
+        return;
+      }
+
+      document.getElementById("importDetailTitle").textContent = `Chi tiết Phiếu Nhập #${id}`;
+      renderRows("importDetailRows", receipt.details || [], (d) => [
+        d.ingredientId,
+        d.ingredientName,
+        d.quantity,
+        Number(d.total || 0).toLocaleString("vi-VN")
+      ], 4);
+      document.getElementById("importDetailModal").style.display = "flex";
+    }
+
+    async function viewExportDetail(id) {
+      const res = await getJson(`/api/export-receipts?id=${id}`);
+      const receipt = res?.receipt;
+      if (!receipt) {
+        alert("Không tìm thấy phiếu xuất");
+        return;
+      }
+
+      document.getElementById("exportDetailTitle").textContent = `Chi tiết Phiếu Xuất #${id}`;
+      renderRows("exportDetailRows", receipt.details || [], (d) => [
+        d.ingredientId,
+        d.ingredientName,
+        d.quantity
+      ], 3);
+      document.getElementById("exportDetailModal").style.display = "flex";
+    }
+
+    async function loadAll() {
+      const [ingredientRes, importRes, exportRes] = await Promise.all([
+        getJson("/api/ingredients"),
+        getJson("/api/import-receipts"),
+        getJson("/api/export-receipts")
+      ]);
+
+      const ingredients = ingredientRes?.items || [];
+      const imports = importRes?.items || [];
+      const exports = exportRes?.items || [];
+      ingredientCache = ingredients;
+
+      renderRows("ingredientRows", ingredients, (x) => [
+        x.id, 
+        x.name, 
+        x.unit, 
+        Number(x.price || 0).toLocaleString("vi-VN"),
+        `<button class="btn-edit" onclick="editIngredient(${x.id})">Sửa</button> <button class="btn-delete" onclick="deleteIngredient(${x.id})">Xóa</button>`
+      ], 5);
+      renderWarehouseRows();
+      
+      renderRows("importRows", imports, (x) => [
+        x.id,
+        x.staffId,
+        x.date,
+        Number(x.total || 0).toLocaleString("vi-VN"),
+        `<button class="btn-edit" onclick="viewImportDetail(${x.id})">Xem chi tiết</button>`
+      ], 5);
+      renderRows("exportRows", exports, (x) => [
+        x.id,
+        x.staffId,
+        x.date,
+        `<button class="btn-edit" onclick="viewExportDetail(${x.id})">Xem chi tiết</button>`
+      ], 4);
+
+      const ingredientValue = ingredients.reduce((s, x) => s + Number(x.price || 0), 0);
+      document.getElementById("mIngredient").textContent = ingredients.length;
+      document.getElementById("mValue").textContent = `${ingredientValue.toLocaleString("vi-VN")} VND`;
+      document.getElementById("mImport").textContent = imports.length;
+    }
+
+    function renderWarehouseRows() {
+      const keyword = String(warehouseSearchInput?.value || "").trim().toLowerCase();
+      const rows = ingredientCache.filter((x) => {
+        if (!keyword) return true;
+        return [x.id, x.name, x.unit, x.stock]
+          .map((v) => String(v ?? "").toLowerCase())
+          .join(" ")
+          .includes(keyword);
+      });
+
+      renderRows("warehouseRows", rows, (x) => [
+        x.id,
+        x.name,
+        x.unit,
+        Number(x.stock || 0).toLocaleString("vi-VN")
+      ], 4);
+    }
+
+    loadAll();
+    warehouseSearchInput?.addEventListener("input", renderWarehouseRows);
+  </script>
+</body>
+</html>

@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Royal Administrator</title>
+  <link rel="stylesheet" href="/portal.css?v=20260412-admin-2" />
+</head>
+<body class="admin-page">
+  <main class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <div class="brand-avatar">A</div>
+        <div>
+          <p class="brand-title">Royal Administrator</p>
+          <p class="brand-sub">Restaurant ★★★★★</p>
+        </div>
+      </div>
+
+      <nav class="admin-menu">
+        <button class="menu-item is-active" data-section="dashboard">Quản lý Thực Đơn</button>
+        <button class="menu-item" data-section="vouchers">Quản lý Voucher</button>
+        <button class="menu-item" data-section="staff">Quản lý Nhân Sự</button>
+        <button class="menu-item" data-section="revenue">Báo cáo Doanh Thu</button>
+        <button class="menu-item" data-section="bills">Thống kê Hóa Đơn</button>
+        <button class="menu-item" data-section="import">Thống kê Nhập Kho</button>
+        <button class="menu-item" data-section="customers">Thông tin Khách Hàng</button>
+        <button class="menu-item" data-section="account">Tài Khoản</button>
+      </nav>
+
+      <div class="sidebar-actions">
+        <a href="/api/health" target="_blank" rel="noreferrer">Kiểm tra API</a>
+        <a href="/">Đăng xuất</a>
+      </div>
+    </aside>
+
+    <section class="admin-content">
+      <header class="admin-topbar">
+        <div>
+          <h1 id="adminHeading">Quản lý Thực Đơn</h1>
+          <p id="welcomeText">Xin chào Quản Lý.</p>
+        </div>
+        <div class="topbar-tag">Main_Admin_Frame</div>
+      </header>
+
+      <section class="admin-section is-visible" data-section="dashboard">
+        <div class="metric-grid">
+          <article class="metric-card">
+            <p>Tổng món ăn</p>
+            <h3 id="mDish">0</h3>
+          </article>
+          <article class="metric-card">
+            <p>Món đang kinh doanh</p>
+            <h3 id="mDishActive">0</h3>
+          </article>
+          <article class="metric-card">
+            <p>Nhân viên</p>
+            <h3 id="mStaff">0</h3>
+          </article>
+          <article class="metric-card">
+            <p>Khách hàng</p>
+            <h3 id="mCustomer">0</h3>
+          </article>
+        </div>
+
+        <article class="panel-block">
+          <div class="panel-head">
+            <h2>Danh sách món ăn</h2>
+            <button class="btn-primary" onclick="openDishForm()">+ Thêm Món</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Tên món</th>
+                  <th>Loại</th>
+                  <th>Giá</th>
+                  <th>Trạng thái</th>
+                  <th>Hành động</th>
+                </tr>
+              </thead>
+              <tbody id="dishRows">
+                <tr><td colspan="6">Đang tải...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div id="dishFormModal" class="modal" style="display: none;">
+            <div class="modal-content">
+              <div class="modal-head">
+                <h3 id="dishFormTitle">Thêm Món Ăn Mới</h3>
+                <button class="btn-close" onclick="closeDishForm()">&times;</button>
+              </div>
+              <form onsubmit="submitDishForm(event)">
+                <div class="form-group">
+                  <label>Tên Món</label>
+                  <input type="text" id="dishName" required />
+                </div>
+                <div class="form-group">
+                  <label>Loại (Zodiac)</label>
+                  <select id="dishType" required>
+                    <option value="Aries">♈ Bạch Dương</option>
+                    <option value="Taurus">♉ Kim Ngưu</option>
+                    <option value="Gemini">♊ Song Tử</option>
+                    <option value="Cancer">♋ Cự Giải</option>
+                    <option value="Leo">♌ Sư Tử</option>
+                    <option value="Virgo">♍ Xử Nữ</option>
+                    <option value="Libra">♎ Thiên Bình</option>
+                    <option value="Scorpio">♏ Bọ Cạp</option>
+                    <option value="Sagittarius">♐ Nhân Mã</option>
+                    <option value="Capricorn">♑ Ma Kết</option>
+                    <option value="Aquarius">♒ Bình Bôi</option>
+                    <option value="Pisces">♓ Song Ngư</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Hình ảnh món ăn</label>
+                  <input type="file" id="dishImage" accept="image/*" hidden />
+                  <button type="button" id="dishImagePicker" class="dish-image-picker" aria-label="Chọn ảnh món ăn">
+                    <img id="dishImagePreview" class="dish-image-preview" src="/api/dish-image?type=Unknown&id=unknown" alt="Dish preview" />
+                  </button>
+                  <small class="dish-image-note">Bấm vào hình tròn để chọn ảnh</small>
+                </div>
+                <div class="form-group">
+                  <label>Giá (VND)</label>
+                  <input type="number" id="dishPrice" min="1000" step="1000" required />
+                </div>
+                <div class="form-group">
+                  <label>Trạng thái</label>
+                  <select id="dishStatus" required>
+                    <option value="Dang kinh doanh">Đang kinh doanh</option>
+                    <option value="Dung kinh doanh">Dừng kinh doanh</option>
+                  </select>
+                </div>
+                <div class="form-actions">
+                  <button type="submit" class="btn-success">Lưu</button>
+                  <button type="button" class="btn-cancel" onclick="closeDishForm()">Hủy</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="admin-section" data-section="vouchers">
+        <article class="panel-block">
+          <div class="panel-head">
+            <h2>Quản lý Voucher</h2>
+            <button class="btn-primary" onclick="openVoucherForm()">+ Thêm Voucher</button>
+          </div>
+
+          <div class="admin-bill-tools">
+            <label class="admin-bill-search-wrap">
+              <span>🔍</span>
+              <input id="voucherSearchAdmin" type="text" placeholder="Tìm voucher theo mã, mô tả, loại..." />
+            </label>
+            <label class="admin-bill-filter-wrap">
+              <span>Hiển thị theo</span>
+              <select id="voucherPointFilterAdmin">
+                <option value="all">Tất cả</option>
+                <option value="under300">Dưới 300 xu</option>
+                <option value="300to500">300 - 500 xu</option>
+                <option value="above500">Trên 500 xu</option>
+                <option value="out">Hết số lượng</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mã</th>
+                  <th>Mô tả</th>
+                  <th>% Giảm</th>
+                  <th>Loại món</th>
+                  <th>Số lượng</th>
+                  <th>Điểm đổi</th>
+                  <th>Hành động</th>
+                </tr>
+              </thead>
+              <tbody id="voucherRows">
+                <tr><td colspan="7">Đang tải...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div id="voucherFormModal" class="modal" style="display: none;">
+            <div class="modal-content">
+              <div class="modal-head">
+                <h3 id="voucherFormTitle">Thêm Voucher Mới</h3>
+                <button class="btn-close" onclick="closeVoucherForm()">&times;</button>
+              </div>
+              <form onsubmit="submitVoucherForm(event)">
+                <div class="form-group">
+                  <label>Mã Voucher</label>
+                  <input type="text" id="voucherCode" maxlength="10" required />
+                </div>
+                <div class="form-group">
+                  <label>Mô tả</label>
+                  <input type="text" id="voucherDescription" maxlength="50" required />
+                </div>
+                <div class="form-group">
+                  <label>Phần trăm giảm</label>
+                  <input type="number" id="voucherPercent" min="1" max="100" required />
+                </div>
+                <div class="form-group">
+                  <label>Loại món áp dụng</label>
+                  <select id="voucherTypeMenu" required>
+                    <option value="All">All</option>
+                    <option value="Aries">Aries</option>
+                    <option value="Taurus">Taurus</option>
+                    <option value="Gemini">Gemini</option>
+                    <option value="Cancer">Cancer</option>
+                    <option value="Leo">Leo</option>
+                    <option value="Virgo">Virgo</option>
+                    <option value="Libra">Libra</option>
+                    <option value="Scorpio">Scorpio</option>
+                    <option value="Sagittarius">Sagittarius</option>
+                    <option value="Capricorn">Capricorn</option>
+                    <option value="Aquarius">Aquarius</option>
+                    <option value="Pisces">Pisces</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Số lượng</label>
+                  <input type="number" id="voucherQuantity" min="0" required />
+                </div>
+                <div class="form-group">
+                  <label>Điểm đổi (xu)</label>
+                  <input type="number" id="voucherPoint" min="0" required />
+                </div>
+                <div class="form-actions">
+                  <button type="submit" class="btn-success">Lưu</button>
+                  <button type="button" class="btn-cancel" onclick="closeVoucherForm()">Hủy</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="admin-section" data-section="staff">
+        <article class="panel-block">
+          <div class="panel-head">
+            <h2>Quản lý Nhân Sự</h2>
+            <button class="btn-primary" onclick="openStaffForm()">+ Thêm Nhân Viên</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Họ tên</th>
+                  <th>Chức vụ</th>
+                  <th>Điện thoại</th>
+                  <th>Trạng thái</th>
+                  <th>Hành động</th>
+                </tr>
+              </thead>
+              <tbody id="staffRows">
+                <tr><td colspan="6">Đang tải...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div id="staffFormModal" class="modal" style="display: none;">
+            <div class="modal-content">
+              <div class="modal-head">
+                <h3 id="staffFormTitle">Thêm Nhân Viên Mới</h3>
+                <button class="btn-close" onclick="closeStaffForm()">&times;</button>
+              </div>
+              <form onsubmit="submitStaffForm(event)">
+                <div class="form-group">
+                  <label>Họ Tên</label>
+                  <input type="text" id="staffName" required />
+                </div>
+                <div class="form-group">
+                  <label>Chức Vụ</label>
+                  <select id="staffRole" required>
+                    <option value="Quản lý">Quản lý</option>
+                    <option value="Nhân viên phục vụ">Nhân viên phục vụ</option>
+                    <option value="Kế toán">Kế toán</option>
+                    <option value="Đầu bếp">Đầu bếp</option>
+                    <option value="Kho quản">Kho quản</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Điện Thoại</label>
+                  <input type="text" id="staffPhone" />
+                </div>
+                <div class="form-group">
+                  <label>Trạng Thái</label>
+                  <select id="staffStatus" required>
+                    <option value="Dang lam viec">Đang làm việc</option>
+                    <option value="Nghi phep">Nghỉ phép</option>
+                    <option value="Da nghi viec">Đã nghỉ việc</option>
+                  </select>
+                </div>
+                <div class="form-actions">
+                  <button type="submit" class="btn-success">Lưu</button>
+                  <button type="button" class="btn-cancel" onclick="closeStaffForm()">Hủy</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="admin-section" data-section="revenue">
+        <div class="metric-grid">
+          <article class="metric-card">
+            <p>Tổng doanh thu</p>
+            <h3 id="mRevenue">0 VND</h3>
+          </article>
+          <article class="metric-card">
+            <p>Hóa đơn đã thanh toán</p>
+            <h3 id="mPaidBill">0</h3>
+          </article>
+          <article class="metric-card">
+            <p>Hóa đơn chưa thanh toán</p>
+            <h3 id="mUnpaidBill">0</h3>
+          </article>
+        </div>
+      </section>
+
+      <section class="admin-section" data-section="bills">
+        <article class="panel-block">
+          <div class="panel-head">
+            <h2>Thống kê Hóa Đơn</h2>
+          </div>
+
+          <div class="admin-bill-summary">
+            <div>
+              <span>Doanh thu hóa đơn trong ngày</span>
+              <strong id="mDailyRevenue">0 VND</strong>
+            </div>
+            <p id="adminToday">Ngày hiện tại: --</p>
+          </div>
+
+          <div class="admin-bill-tools">
+            <label class="admin-bill-search-wrap">
+              <span>🔍</span>
+              <input id="adminBillSearch" type="text" placeholder="Tìm kiếm hóa đơn..." />
+            </label>
+            <label class="admin-bill-filter-wrap">
+              <span>Hiển thị theo</span>
+              <select id="adminBillStatusFilter">
+                <option value="all">Tất cả</option>
+                <option value="pending">Chờ xác nhận</option>
+                <option value="unpaid">Chưa thanh toán</option>
+                <option value="paid">Đã thanh toán</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Khách hàng</th>
+                  <th>Ban</th>
+                  <th>Ngày hóa đơn</th>
+                  <th>Phương thức</th>
+                  <th>Tiền món</th>
+                  <th>Tổng tiền</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="billRows">
+                <tr><td colspan="9">Đang tải...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="admin-section" data-section="import">
+        <div class="metric-grid">
+          <article class="metric-card">
+            <p>Số phiếu nhập kho</p>
+            <h3 id="mImportCount">0</h3>
+          </article>
+          <article class="metric-card">
+            <p>Tổng tiền nhập kho</p>
+            <h3 id="mImportTotal">0 VND</h3>
+          </article>
+        </div>
+
+        <article class="panel-block">
+          <div class="panel-head">
+            <h2>Thống kê Nhập Kho (Danh sách Phiếu Nhập Kho)</h2>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID NK</th>
+                  <th>ID NV</th>
+                  <th>Ngày nhập</th>
+                  <th>Tổng tiền</th>
+                </tr>
+              </thead>
+              <tbody id="importRows">
+                <tr><td colspan="4">Đang tải...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="admin-section" data-section="customers">
+        <article class="panel-block">
+          <div class="panel-head">
+            <h2>Thông tin Khách Hàng</h2>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Họ tên</th>
+                  <th>Email</th>
+                  <th>Điểm thưởng</th>
+                </tr>
+              </thead>
+              <tbody id="customerRows">
+                <tr><td colspan="4">Đang tải...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="admin-section" data-section="account">
+        <!-- Phần Thông tin Nhân Viên -->
+        <article class="panel-block admin-account-panel">
+          <h3 class="section-title">Thông tin NHÂN VIÊN</h3>
+          <div class="admin-staff-info">
+            <div class="admin-staff-avatar">
+              <div class="avatar-icon">👨‍💼</div>
+            </div>
+
+            <div class="admin-staff-details">
+              <div class="info-field">
+                <label>Mã Nhân Viên</label>
+                <div id="adminStaffId" class="info-value">100</div>
+              </div>
+              <div class="info-field">
+                <label>Tên Nhân Viên</label>
+                <div id="adminStaffName" class="info-value">Nguyen Hoang Viet</div>
+              </div>
+              <div class="info-field">
+                <label>Ngày vào làm</label>
+                <div id="adminStaffDate" class="info-value">10-05-2023</div>
+              </div>
+
+              <div class="info-field">
+                <label>Số Điện Thoại</label>
+                <div id="adminStaffPhone" class="info-value">0848044725</div>
+              </div>
+              <div class="info-field">
+                <label>Chức vụ</label>
+                <div id="adminStaffRole" class="info-value">Quan ly</div>
+              </div>
+              <div class="info-field">
+                <label>Mã Người Quản Lý</label>
+                <div id="adminStaffManager" class="info-value">100</div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Phần Thông tin Tài Khoản -->
+        <article class="panel-block admin-account-panel">
+          <h3 class="section-title">Thông tin TÀI KHOẢN</h3>
+          <div class="admin-login-info">
+            <div class="info-field">
+              <label>Email</label>
+              <div id="adminAccountEmail" class="info-value">admin@restaurant.local</div>
+            </div>
+            <div class="info-field">
+              <label>Vai trò</label>
+              <div class="info-value">Quản Lý</div>
+            </div>
+
+            <div style="grid-column: span 2;">
+              <div class="info-field">
+                <label>Mật Khẩu</label>
+                <div class="password-input-wrapper">
+                  <input type="password" id="adminPassword" class="password-input" value="••••••" readonly />
+                  <button class="password-toggle" onclick="togglePasswordVisibility()">👁</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="grid-column: span 2; margin-top: 16px;">
+              <button class="btn-secondary" onclick="alert('Tính năng đổi mật khẩu sắp có')">Đổi mật khẩu</button>
+            </div>
+          </div>
+        </article>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const query = new URLSearchParams(window.location.search);
+    const email = query.get("email");
+    if (email) {
+      document.getElementById("welcomeText").textContent = `Xin chào admin: ${email}`;
+      const adminAccountEmail = document.getElementById("adminAccountEmail");
+      if (adminAccountEmail) adminAccountEmail.textContent = email;
+    }
+
+    const menuButtons = [...document.querySelectorAll(".menu-item")];
+    const sections = [...document.querySelectorAll(".admin-section")];
+    const heading = document.getElementById("adminHeading");
+    const adminBillSearch = document.getElementById("adminBillSearch");
+    const adminBillStatusFilter = document.getElementById("adminBillStatusFilter");
+    const adminVoucherSearch = document.getElementById("voucherSearchAdmin");
+    const adminVoucherPointFilter = document.getElementById("voucherPointFilterAdmin");
+
+    let currentDishId = null;
+    let currentDishImageBase64 = "";
+    let currentStaffId = null;
+    let currentVoucherCode = null;
+    let adminBillsCache = [];
+    let adminVouchersCache = [];
+
+    const labels = {
+      dashboard: "Quản lý Thực Đơn",
+      vouchers: "Quản lý Voucher",
+      staff: "Quản lý Nhân Sự",
+      revenue: "Báo cáo Doanh Thu",
+      bills: "Thống kê Hóa Đơn",
+      import: "Thống kê Nhập Kho",
+      customers: "Thông tin Khách Hàng",
+      account: "Tài Khoản"
+    };
+
+    function showSection(name) {
+      menuButtons.forEach((btn) => btn.classList.toggle("is-active", btn.dataset.section === name));
+      sections.forEach((sec) => sec.classList.toggle("is-visible", sec.dataset.section === name));
+      heading.textContent = labels[name] || "Royal Administrator";
+    }
+
+    menuButtons.forEach((btn) => {
+      btn.addEventListener("click", () => showSection(btn.dataset.section));
+    });
+
+    async function fetchJson(url) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) return null;
+        return await res.json();
+      } catch (err) {
+        return null;
+      }
+    }
+
+    async function fetchWithMethod(url, method = "GET", body = null) {
+      try {
+        const opts = { method };
+        if (body) {
+          opts.headers = { "Content-Type": "application/json" };
+          opts.body = JSON.stringify(body);
+        }
+        const res = await fetch(url, opts);
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || `HTTP ${res.status}`);
+        }
+        return await res.json().catch(() => ({}));
+      } catch (err) {
+        alert(`Lỗi: ${err.message}`);
+        return null;
+      }
+    }
+
+    function row(values, rowClass = "") {
+      return `<tr class="${rowClass}">${values.map((v) => `<td>${v ?? ""}</td>`).join("")}</tr>`;
+    }
+
+    function renderRows(id, items, mapFn, colSpan) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (!items || items.length === 0) {
+        el.innerHTML = `<tr><td colspan="${colSpan}">Không có dữ liệu</td></tr>`;
+        return;
+      }
+      el.innerHTML = items.map((x) => row(mapFn(x))).join("");
+    }
+
+    function renderCustomRows(id, items, mapFn, rowClassFn, colSpan) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (!items || items.length === 0) {
+        el.innerHTML = `<tr><td colspan="${colSpan}">Không có dữ liệu</td></tr>`;
+        return;
+      }
+      el.innerHTML = items.map((x) => row(mapFn(x), rowClassFn(x))).join("");
+    }
+
+    // ========== DISH CRUD ==========
+    function openDishForm() {
+      currentDishId = null;
+      currentDishImageBase64 = "";
+      document.getElementById("dishFormTitle").textContent = "Thêm Món Ăn Mới";
+      document.getElementById("dishName").value = "";
+      document.getElementById("dishType").value = "Aries";
+      document.getElementById("dishPrice").value = "";
+      document.getElementById("dishStatus").value = "Dang kinh doanh";
+      document.getElementById("dishImage").value = "";
+      document.getElementById("dishImagePreview").src = "/api/dish-image?type=Unknown&id=unknown";
+      document.getElementById("dishFormModal").style.display = "flex";
+    }
+
+    function closeDishForm() {
+      document.getElementById("dishFormModal").style.display = "none";
+    }
+
+    async function editDish(id) {
+      const res = await fetchJson(`/api/dishes?id=${id}`);
+      if (!res || !res.items || res.items.length === 0) return;
+      const dish = res.items[0];
+      currentDishId = id;
+      currentDishImageBase64 = "";
+      document.getElementById("dishFormTitle").textContent = `Sửa Món Ăn #${id}`;
+      document.getElementById("dishName").value = dish.name || "";
+      document.getElementById("dishType").value = dish.type || "Aries";
+      document.getElementById("dishPrice").value = dish.price || "";
+      document.getElementById("dishStatus").value = dish.status || "Dang kinh doanh";
+      document.getElementById("dishImage").value = "";
+      document.getElementById("dishImagePreview").src = `/api/dish-image?type=${encodeURIComponent(dish.type || "Unknown")}&id=${encodeURIComponent(dish.id || "unknown")}`;
+      document.getElementById("dishFormModal").style.display = "flex";
+    }
+
+    async function submitDishForm(e) {
+      e.preventDefault();
+      const name = document.getElementById("dishName").value.trim();
+      const type = document.getElementById("dishType").value;
+      const price = parseInt(document.getElementById("dishPrice").value);
+      const status = document.getElementById("dishStatus").value;
+
+      if (!name || price <= 0) {
+        alert("Vui lòng nhập đúng thông tin");
+        return;
+      }
+
+      const body = { name, type, price, status, id: currentDishId };
+      if (currentDishImageBase64) {
+        body.imageBase64 = currentDishImageBase64;
+      }
+      const method = currentDishId ? "PUT" : "POST";
+      const result = await fetchWithMethod("/api/dishes", method, body);
+      
+      if (result) {
+        alert(result.message || "Thành công");
+        closeDishForm();
+        loadDashboardData();
+      }
+    }
+
+    function handleDishImageChange(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) {
+        currentDishImageBase64 = "";
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = String(reader.result || "");
+        currentDishImageBase64 = dataUrl;
+        document.getElementById("dishImagePreview").src = dataUrl;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function openDishImagePicker() {
+      document.getElementById("dishImage")?.click();
+    }
+
+    async function deleteDish(id) {
+      if (!confirm("Xóa món này?")) return;
+      const result = await fetchWithMethod(`/api/dishes?id=${id}`, "DELETE");
+      if (result) {
+        alert(result.message || "Xóa thành công");
+        loadDashboardData();
+      }
+    }
+
+    // ========== VOUCHER CRUD ==========
+    function openVoucherForm() {
+      currentVoucherCode = null;
+      document.getElementById("voucherFormTitle").textContent = "Thêm Voucher Mới";
+      document.getElementById("voucherCode").value = "";
+      document.getElementById("voucherCode").disabled = false;
+      document.getElementById("voucherDescription").value = "";
+      document.getElementById("voucherPercent").value = 20;
+      document.getElementById("voucherTypeMenu").value = "All";
+      document.getElementById("voucherQuantity").value = 0;
+      document.getElementById("voucherPoint").value = 200;
+      document.getElementById("voucherFormModal").style.display = "flex";
+    }
+
+    function closeVoucherForm() {
+      document.getElementById("voucherFormModal").style.display = "none";
+    }
+
+    async function editVoucher(code) {
+      const res = await fetchJson(`/api/vouchers?code=${encodeURIComponent(code)}`);
+      const voucher = res?.voucher;
+      if (!voucher || !voucher.code) return;
+
+      currentVoucherCode = String(voucher.code);
+      document.getElementById("voucherFormTitle").textContent = `Sửa Voucher ${currentVoucherCode}`;
+      document.getElementById("voucherCode").value = currentVoucherCode;
+      document.getElementById("voucherCode").disabled = true;
+      document.getElementById("voucherDescription").value = voucher.description || "";
+      document.getElementById("voucherPercent").value = Number(voucher.percent || 0);
+      document.getElementById("voucherTypeMenu").value = voucher.typeMenu || "All";
+      document.getElementById("voucherQuantity").value = Number(voucher.quantity || 0);
+      document.getElementById("voucherPoint").value = Number(voucher.point || 0);
+      document.getElementById("voucherFormModal").style.display = "flex";
+    }
+
+    async function submitVoucherForm(e) {
+      e.preventDefault();
+      const code = String(document.getElementById("voucherCode").value || "").trim();
+      const description = String(document.getElementById("voucherDescription").value || "").trim();
+      const percent = Number(document.getElementById("voucherPercent").value || 0);
+      const typeMenu = String(document.getElementById("voucherTypeMenu").value || "All");
+      const quantity = Number(document.getElementById("voucherQuantity").value || 0);
+      const point = Number(document.getElementById("voucherPoint").value || 0);
+
+      if (!code || !description) {
+        alert("Vui lòng nhập mã và mô tả voucher");
+        return;
+      }
+      if (percent < 1 || percent > 100) {
+        alert("Phần trăm giảm phải từ 1 đến 100");
+        return;
+      }
+      if (quantity < 0 || point < 0) {
+        alert("Số lượng và điểm đổi không được âm");
+        return;
+      }
+
+      const body = {
+        code: currentVoucherCode || code,
+        description,
+        percent,
+        typeMenu,
+        quantity,
+        point
+      };
+      const method = currentVoucherCode ? "PUT" : "POST";
+      const result = await fetchWithMethod("/api/vouchers", method, body);
+      if (result) {
+        alert(result.message || "Lưu voucher thành công");
+        closeVoucherForm();
+        loadDashboardData();
+      }
+    }
+
+    async function deleteVoucher(code) {
+      if (!confirm(`Xóa voucher ${code}?`)) return;
+      const result = await fetchWithMethod(`/api/vouchers?code=${encodeURIComponent(code)}`, "DELETE");
+      if (result) {
+        alert(result.message || "Xóa voucher thành công");
+        loadDashboardData();
+      }
+    }
+
+    function renderVoucherRows() {
+      const queryText = String(adminVoucherSearch?.value || "").trim().toLowerCase();
+      const filter = String(adminVoucherPointFilter?.value || "all").toLowerCase();
+
+      const filtered = adminVouchersCache.filter((v) => {
+        const code = String(v.code || "").toLowerCase();
+        const desc = String(v.description || "").toLowerCase();
+        const type = String(v.typeMenu || "").toLowerCase();
+        const point = Number(v.point || 0);
+        const quantity = Number(v.quantity || 0);
+
+        if (filter === "under300" && !(point < 300)) return false;
+        if (filter === "300to500" && !(point >= 300 && point <= 500)) return false;
+        if (filter === "above500" && !(point > 500)) return false;
+        if (filter === "out" && quantity > 0) return false;
+
+        if (!queryText) return true;
+        return [code, desc, type, point, quantity].join(" ").includes(queryText);
+      });
+
+      renderRows("voucherRows", filtered.slice(0, 40), (v) => [
+        v.code,
+        v.description,
+        `${Number(v.percent || 0)}%`,
+        v.typeMenu,
+        Number(v.quantity || 0),
+        Number(v.point || 0),
+        `<button class="btn-edit" onclick='editVoucher(${JSON.stringify(String(v.code || ""))})'>Sửa</button> <button class="btn-delete" onclick='deleteVoucher(${JSON.stringify(String(v.code || ""))})'>Xóa</button>`
+      ], 7);
+    }
+
+    // ========== STAFF CRUD ==========
+    function openStaffForm() {
+      currentStaffId = null;
+      document.getElementById("staffFormTitle").textContent = "Thêm Nhân Viên Mới";
+      document.getElementById("staffName").value = "";
+      document.getElementById("staffRole").value = "Nhân viên phục vụ";
+      document.getElementById("staffPhone").value = "";
+      document.getElementById("staffStatus").value = "Dang lam viec";
+      document.getElementById("staffFormModal").style.display = "flex";
+    }
+
+    function closeStaffForm() {
+      document.getElementById("staffFormModal").style.display = "none";
+    }
+
+    async function editStaff(id) {
+      const res = await fetchJson(`/api/staff?id=${id}`);
+      if (!res || !res.staff) return;
+      const staff = res.staff;
+      currentStaffId = id;
+      document.getElementById("staffFormTitle").textContent = `Sửa Nhân Viên #${id}`;
+      document.getElementById("staffName").value = staff.name || "";
+      document.getElementById("staffRole").value = staff.role || "Nhân viên phục vụ";
+      document.getElementById("staffPhone").value = staff.phone || "";
+      document.getElementById("staffStatus").value = staff.status || "Dang lam viec";
+      document.getElementById("staffFormModal").style.display = "flex";
+    }
+
+    async function submitStaffForm(e) {
+      e.preventDefault();
+      const tenNV = document.getElementById("staffName").value.trim();
+      const chucvu = document.getElementById("staffRole").value;
+      const sdt = document.getElementById("staffPhone").value.trim();
+      const tinhTrang = document.getElementById("staffStatus").value;
+
+      if (!tenNV) {
+        alert("Vui lòng nhập tên nhân viên");
+        return;
+      }
+
+      const body = { tenNV, chucvu, sdt, tinhTrang, id: currentStaffId };
+      const method = currentStaffId ? "PUT" : "POST";
+      const result = await fetchWithMethod("/api/staff", method, body);
+      
+      if (result) {
+        alert(result.message || "Thành công");
+        closeStaffForm();
+        loadDashboardData();
+      }
+    }
+
+    async function deleteStaff(id) {
+      if (!confirm("Xóa nhân viên này?")) return;
+      const result = await fetchWithMethod(`/api/staff?id=${id}`, "DELETE");
+      if (result) {
+        alert(result.message || "Xóa thành công");
+        loadDashboardData();
+      }
+    }
+
+    function renderAdminBillStatus(bill) {
+      const status = String(bill.status || "").toLowerCase();
+      if (status.includes("da thanh")) {
+        return '<span class="nb-inline-status ok">Đã thanh toán</span>';
+      }
+      if (String(bill.paymentRequestStatus || "").toLowerCase() === "pending") {
+        return '<span class="nb-inline-status wait">Chờ xác nhận</span>';
+      }
+      return '<span class="nb-inline-status idle">Chưa thanh toán</span>';
+    }
+
+    function renderPaymentMethod(method) {
+      const raw = String(method || "").toLowerCase();
+      if (raw === "cash") return "Tiền mặt";
+      if (raw === "card") return "Thẻ";
+      if (raw === "transfer") return "Chuyển khoản";
+      return "--";
+    }
+
+    function getBillRowClass(bill) {
+      const status = String(bill.status || "").toLowerCase();
+      if (status.includes("da thanh")) return "bill-row-paid";
+      if (String(bill.paymentRequestStatus || "").toLowerCase() === "pending") return "bill-row-pending";
+      return "bill-row-unpaid";
+    }
+
+    function renderAdminBillAction(bill) {
+      const status = String(bill.status || "").toLowerCase();
+      if (status.includes("da thanh")) {
+        return "<span class=\"nb-inline-status ok\">Hoàn tất</span>";
+      }
+      if (String(bill.paymentRequestStatus || "").toLowerCase() === "pending") {
+        return `<button class="nb-row-pay-btn" onclick="confirmBillPayment(${bill.id}, true)">Xác nhận thanh toán</button>`;
+      }
+      return `<button class="nb-row-pay-btn" onclick="confirmBillPayment(${bill.id}, false)">Xác nhận thanh toán</button>`;
+    }
+
+    async function confirmBillPayment(id, hasRequest) {
+      const ok = confirm(`Xác nhận thanh toán hóa đơn #${id}?`);
+      if (!ok) return;
+      const action = hasRequest ? "confirm-pay" : "pay";
+      const result = await fetchWithMethod("/api/bills", "PUT", { billId: id, action });
+      if (result) {
+        alert(result.message || `Đã xác nhận hóa đơn #${id}`);
+        loadDashboardData();
+      }
+    }
+
+    function formatDateDisplay(dateText) {
+      if (!dateText) return "--";
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateText)) {
+        const [y, m, d] = dateText.split("-");
+        return `${d}-${m}-${y}`;
+      }
+      return dateText;
+    }
+
+    function renderAdminBillRows() {
+      const queryText = String(adminBillSearch?.value || "").trim().toLowerCase();
+      const filter = String(adminBillStatusFilter?.value || "all").toLowerCase();
+
+      const filtered = adminBillsCache.filter((bill) => {
+        const status = String(bill.status || "").toLowerCase();
+        const requestStatus = String(bill.paymentRequestStatus || "").toLowerCase();
+
+        if (filter === "paid" && !status.includes("da thanh")) {
+          return false;
+        }
+        if (filter === "pending" && requestStatus !== "pending") {
+          return false;
+        }
+        if (filter === "unpaid" && status.includes("da thanh")) {
+          return false;
+        }
+
+        if (!queryText) {
+          return true;
+        }
+
+        return [
+          bill.id,
+          bill.customerId,
+          bill.tableId,
+          formatDateDisplay(bill.date),
+          Number(bill.mealTotal || 0).toLocaleString("vi-VN"),
+          Number(bill.total || 0).toLocaleString("vi-VN")
+        ].join(" ").toLowerCase().includes(queryText);
+      });
+
+      renderCustomRows("billRows", filtered.slice(0, 40), (b) => [
+        b.id,
+        b.customerId,
+        b.tableId,
+        formatDateDisplay(b.date),
+        renderPaymentMethod(b.paymentMethod),
+        Number(b.mealTotal || 0).toLocaleString("vi-VN"),
+        Number(b.total || 0).toLocaleString("vi-VN"),
+        renderAdminBillStatus(b),
+        renderAdminBillAction(b)
+      ], getBillRowClass, 9);
+    }
+
+    async function loadDashboardData() {
+      const [dishesRes, voucherRes, staffRes, customerRes, billRes, importRes] = await Promise.all([
+        fetchJson("/api/dishes"),
+        fetchJson("/api/vouchers"),
+        fetchJson("/api/staff"),
+        fetchJson("/api/customers"),
+        fetchJson("/api/bills"),
+        fetchJson("/api/import-receipts")
+      ]);
+
+      const dishes = dishesRes?.items || [];
+      const vouchers = voucherRes?.items || [];
+      const staffs = staffRes?.items || [];
+      const customers = customerRes?.items || [];
+      const bills = billRes?.items || [];
+      const imports = importRes?.items || [];
+
+      const activeDishCount = dishes.filter((d) => String(d.status || "").toLowerCase().includes("dang")).length;
+      const paid = bills.filter((b) => String(b.status || "").toLowerCase().includes("da thanh")).length;
+      const unpaid = bills.filter((b) => String(b.status || "").toLowerCase().includes("chua thanh")).length;
+      const pendingRequests = bills.filter((b) => String(b.paymentRequestStatus || "").toLowerCase() === "pending").length;
+      const revenue = bills.reduce((sum, b) => sum + Number(b.total || 0), 0);
+      const importTotal = imports.reduce((sum, x) => sum + Number(x.total || 0), 0);
+
+      document.getElementById("mDish").textContent = dishes.length;
+      document.getElementById("mDishActive").textContent = activeDishCount;
+      document.getElementById("mStaff").textContent = staffs.length;
+      document.getElementById("mCustomer").textContent = customers.length;
+      document.getElementById("mPaidBill").textContent = paid;
+      document.getElementById("mUnpaidBill").textContent = `${unpaid} (${pendingRequests} chờ xác nhận)`;
+      document.getElementById("mRevenue").textContent = `${revenue.toLocaleString("vi-VN")} VND`;
+      document.getElementById("mImportCount").textContent = imports.length;
+      document.getElementById("mImportTotal").textContent = `${importTotal.toLocaleString("vi-VN")} VND`;
+
+      const now = new Date();
+      const todayIso = [
+        now.getFullYear(),
+        String(now.getMonth() + 1).padStart(2, "0"),
+        String(now.getDate()).padStart(2, "0")
+      ].join("-");
+      const dailyRevenue = bills
+        .filter((b) => String(b.date || "") === todayIso)
+        .reduce((sum, b) => sum + Number(b.total || 0), 0);
+      document.getElementById("mDailyRevenue").textContent = `${dailyRevenue.toLocaleString("vi-VN")} VND`;
+      document.getElementById("adminToday").textContent = `Ngày hiện tại: ${formatDateDisplay(todayIso)}`;
+
+      renderRows("dishRows", dishes.slice(0, 12), (d) => [
+        d.id, 
+        d.name, 
+        d.type, 
+        Number(d.price || 0).toLocaleString("vi-VN"),
+        d.status,
+        `<button class="btn-edit" onclick="editDish(${d.id})">Sửa</button> <button class="btn-delete" onclick="deleteDish(${d.id})">Xóa</button>`
+      ], 6);
+      
+      renderRows("staffRows", staffs.slice(0, 12), (s) => [
+        s.id,
+        s.name || s.fullName,
+        s.role || s.chucvu || "N/A",
+        s.phone || s.sdt || "N/A",
+        s.status || s.tinhTrang || "N/A",
+        `<button class="btn-edit" onclick="editStaff(${s.id})">Sửa</button> <button class="btn-delete" onclick="deleteStaff(${s.id})">Xóa</button>`
+      ], 6);
+      
+      renderRows("customerRows", customers.slice(0, 12), (c) => [
+        c.id,
+        c.name || c.fullName,
+        c.email || `ID_ND: ${c.userId ?? "N/A"}`,
+        c.rewardPoint || c.points || 0
+      ], 4);
+      
+      adminBillsCache = bills;
+      renderAdminBillRows();
+
+      adminVouchersCache = vouchers;
+      renderVoucherRows();
+      
+      renderRows("importRows", imports.slice(0, 12), (i) => [
+        i.id,
+        i.staffId,
+        i.date,
+        Number(i.total || 0).toLocaleString("vi-VN")
+      ], 4);
+    }
+
+    // Toggle password visibility
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById("adminPassword");
+      const toggleButton = document.querySelector(".password-toggle");
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        toggleButton.textContent = "👁️‍🗨️";
+      } else {
+        passwordInput.type = "password";
+        toggleButton.textContent = "👁️";
+      }
+    }
+
+    loadDashboardData();
+    document.getElementById("dishImage")?.addEventListener("change", handleDishImageChange);
+    document.getElementById("dishImagePicker")?.addEventListener("click", openDishImagePicker);
+    adminBillSearch?.addEventListener("input", renderAdminBillRows);
+    adminBillStatusFilter?.addEventListener("change", renderAdminBillRows);
+    adminVoucherSearch?.addEventListener("input", renderVoucherRows);
+    adminVoucherPointFilter?.addEventListener("change", renderVoucherRows);
+    setInterval(loadDashboardData, 5000);
+  </script>
+</body>
+</html>

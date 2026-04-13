@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Royal Staff</title>
+  <link rel="stylesheet" href="/portal.css?v=20260412-role-3" />
+</head>
+<body class="role-page staff-role">
+  <main class="role-shell">
+    <aside class="role-sidebar">
+      <div class="role-brand">
+        <div class="brand-avatar">S</div>
+        <div>
+          <p class="brand-title">Royal Staff</p>
+          <p class="brand-sub">Service Console</p>
+        </div>
+      </div>
+
+      <nav class="role-menu">
+        <button class="menu-item is-active" data-section="tables">Menu Bàn</button>
+        <button class="menu-item" data-section="customers">Thông tin Khách Hàng</button>
+        <button class="menu-item" data-section="account">Tài khoản</button>
+      </nav>
+
+      <div class="sidebar-actions">
+        <a href="/">Đăng xuất</a>
+      </div>
+    </aside>
+
+    <section class="role-content">
+      <header class="role-topbar">
+        <div>
+          <h1 id="sectionTitle">Menu Bàn</h1>
+          <p id="welcomeText">Xin chào nhân viên.</p>
+        </div>
+      </header>
+
+      <section class="role-section is-visible" data-section="tables">
+        <article class="panel-block">
+          <div class="panel-head panel-head-wrap">
+            <h2>Bàn theo tầng</h2>
+            <div class="chip-group" id="floorChips"></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>ID</th><th>Tên bàn</th><th>Tầng</th><th>Trạng thái</th><th>Thao tác</th></tr>
+              </thead>
+              <tbody id="tableRows"><tr><td colspan="5">Đang tải...</td></tr></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="role-section" data-section="customers">
+        <article class="panel-block">
+          <div class="panel-head"><h2>Danh sách Khách Hàng</h2></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>ID</th><th>Tên KH</th><th>Ngày tham gia</th><th>Điểm</th><th>Doanh số</th></tr>
+              </thead>
+              <tbody id="customerRows"><tr><td colspan="5">Đang tải...</td></tr></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="role-section" data-section="account">
+        <article class="panel-block">
+          <div class="panel-head"><h2>Thông tin tài khoản</h2></div>
+          <div class="detail-grid">
+            <div><span>Email</span><strong id="accEmail">--</strong></div>
+            <div><span>Role</span><strong id="accRole">Nhân Viên</strong></div>
+            <div><span>User ID</span><strong id="accUserId">--</strong></div>
+          </div>
+        </article>
+      </section>
+    </section>
+  </main>
+
+  <div id="reserveModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-head">
+        <h3>Đặt trước bàn</h3>
+        <button class="btn-close" onclick="closeReserveModal()">&times;</button>
+      </div>
+      <form onsubmit="submitReserveForm(event)">
+        <div class="form-group">
+          <label>Tên khách hàng</label>
+          <input type="text" id="reserveCustomerName" required />
+        </div>
+        <div class="form-group">
+          <label>Số điện thoại</label>
+          <input type="text" id="reserveCustomerPhone" required />
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-success">Xác nhận đặt trước</button>
+          <button type="button" class="btn-cancel" onclick="closeReserveModal()">Hủy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="orderModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-head">
+        <h3 id="orderTitle">Gọi món cho bàn</h3>
+        <button class="btn-close" onclick="closeOrderModal()">&times;</button>
+      </div>
+      <div class="form-group">
+        <label>ID Khách hàng (bắt buộc nếu bàn chưa có hóa đơn)</label>
+        <input type="number" id="orderCustomerId" min="1" placeholder="Ví dụ: 200" />
+      </div>
+      <div class="nb-toolbar" style="margin-top: 8px;">
+        <input id="orderFoodSearch" type="text" placeholder="Tìm kiếm món ăn . . ." />
+        <label class="nb-sort">
+          <span>Sắp xếp theo</span>
+          <select id="orderFoodSort">
+            <option value="">Mặc định</option>
+            <option value="priceAsc">Giá tăng dần</option>
+            <option value="priceDesc">Giá giảm dần</option>
+            <option value="nameAsc">Tên A-Z</option>
+          </select>
+        </label>
+      </div>
+      <div class="nb-zodiac-row" id="orderZodiacTabs"></div>
+      <section class="nb-panel" style="margin-top: 8px;">
+        <section class="nb-food-grid" id="orderFoodGrid"></section>
+      </section>
+      <div class="form-actions" style="margin-top: 12px;">
+        <button type="button" class="btn-cancel" onclick="closeOrderModal()">Đóng</button>
+      </div>
+
+      <div class="table-wrap" style="margin-top: 12px;">
+        <table>
+          <thead>
+            <tr><th>ID món</th><th>Tên món</th><th>Số lượng</th><th>Thành tiền</th></tr>
+          </thead>
+          <tbody id="orderItemsRows"><tr><td colspan="4">Chưa có món</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function getAuthContext(defaultRole) {
+      let auth = null;
+      try {
+        auth = JSON.parse(sessionStorage.getItem("rtd.auth") || "null");
+      } catch (_) {
+        auth = null;
+      }
+
+      if (auth && (auth.email || auth.userId || auth.role)) {
+        return auth;
+      }
+
+      const query = new URLSearchParams(window.location.search);
+      const legacy = {
+        email: query.get("email") || "",
+        userId: query.get("userId") || "",
+        role: query.get("role") || defaultRole
+      };
+      if (legacy.email || legacy.userId || query.get("role")) {
+        try {
+          sessionStorage.setItem("rtd.auth", JSON.stringify(legacy));
+        } catch (_) {
+          // Ignore storage errors.
+        }
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      return legacy;
+    }
+
+    const authContext = getAuthContext("Nhân Viên");
+    const email = authContext.email;
+    const userId = authContext.userId;
+    const role = authContext.role || "Nhân Viên";
+    if (email) {
+      document.getElementById("welcomeText").textContent = `Xin chào nhân viên: ${email}`;
+      document.getElementById("accEmail").textContent = email;
+    }
+    document.getElementById("accRole").textContent = role;
+    document.getElementById("accUserId").textContent = userId || "--";
+
+    const sectionTitle = document.getElementById("sectionTitle");
+    const menuButtons = [...document.querySelectorAll(".menu-item")];
+    const sections = [...document.querySelectorAll(".role-section")];
+    const labels = {
+      tables: "Menu Bàn",
+      customers: "Thông tin Khách Hàng",
+      account: "Tài khoản"
+    };
+    const orderZodiacs = [
+      { key: "All", label: "Tất cả" },
+      { key: "Aries", label: "Aries" },
+      { key: "Taurus", label: "Taurus" },
+      { key: "Gemini", label: "Gemini" },
+      { key: "Cancer", label: "Cancer" },
+      { key: "Leo", label: "Leo" },
+      { key: "Virgo", label: "Virgo" },
+      { key: "Libra", label: "Libra" },
+      { key: "Scorpio", label: "Scorpio" },
+      { key: "Sagittarius", label: "Sagittarius" },
+      { key: "Capricorn", label: "Capricorn" },
+      { key: "Aquarius", label: "Aquarius" },
+      { key: "Pisces", label: "Pisces" }
+    ];
+    let pendingReserveTableId = null;
+    let pendingOrderTableId = null;
+    let orderDishCache = [];
+    let currentOrderZodiac = "All";
+    const orderQuantityByDish = new Map();
+
+    function switchSection(name) {
+      menuButtons.forEach((x) => x.classList.toggle("is-active", x.dataset.section === name));
+      sections.forEach((x) => x.classList.toggle("is-visible", x.dataset.section === name));
+      sectionTitle.textContent = labels[name] || "Royal Staff";
+    }
+    menuButtons.forEach((b) => b.addEventListener("click", () => switchSection(b.dataset.section)));
+
+    function row(values) {
+      return `<tr>${values.map((v) => `<td>${v ?? ""}</td>`).join("")}</tr>`;
+    }
+    function renderRows(id, items, mapFn, colSpan) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (!items || items.length === 0) {
+        el.innerHTML = `<tr><td colspan="${colSpan}">Không có dữ liệu</td></tr>`;
+        return;
+      }
+      el.innerHTML = items.map((item) => row(mapFn(item))).join("");
+    }
+    async function getJson(path) {
+      try {
+        const res = await fetch(path);
+        if (!res.ok) return null;
+        return await res.json();
+      } catch {
+        return null;
+      }
+    }
+
+    async function fetchWithMethod(url, method = "GET", body = null) {
+      try {
+        const opts = { method };
+        if (body) {
+          opts.headers = { "Content-Type": "application/json" };
+          opts.body = JSON.stringify(body);
+        }
+        const res = await fetch(url, opts);
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || `HTTP ${res.status}`);
+        }
+        return await res.json().catch(() => ({}));
+      } catch (error) {
+        alert(`Lỗi: ${error.message}`);
+        return null;
+      }
+    }
+
+    const floors = [
+      { label: "Tầng 1", value: "Tang 1" },
+      { label: "Tầng 2", value: "Tang 2" },
+      { label: "Tầng 3", value: "Tang 3" }
+    ];
+    const floorHost = document.getElementById("floorChips");
+    let currentFloor = "Tang 1";
+    floors.forEach((f) => {
+      const btn = document.createElement("button");
+      btn.className = `chip ${f.value === currentFloor ? "is-active" : ""}`;
+      btn.textContent = f.label;
+      btn.addEventListener("click", () => {
+        currentFloor = f.value;
+        [...floorHost.children].forEach((x) => x.classList.toggle("is-active", x.textContent === f.label));
+        loadTables();
+      });
+      floorHost.appendChild(btn);
+    });
+
+    async function loadTables() {
+      let data = await getJson(`/api/tables?floor=${encodeURIComponent(currentFloor)}`);
+      if (!data?.items || data.items.length === 0) {
+        const fallbackFloor = currentFloor.replace("Tang", "Tầng");
+        data = await getJson(`/api/tables?floor=${encodeURIComponent(fallbackFloor)}`);
+      }
+
+      renderRows("tableRows", data?.items || [], (t) => [
+        t.id,
+        t.name,
+        t.floor,
+        t.status,
+        renderTableActions(t)
+      ], 5);
+
+      document.querySelectorAll("[data-table-action]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const id = Number(btn.getAttribute("data-table-id"));
+          const action = String(btn.getAttribute("data-table-action") || "");
+
+          if (action === "reserve") {
+            openReserveModal(id);
+            return;
+          }
+
+          if (action === "order") {
+            await openOrderModal(id);
+            return;
+          }
+
+          const result = await fetchWithMethod("/api/tables", "PUT", { id, action });
+          if (result) {
+            await loadTables();
+          }
+        });
+      });
+    }
+
+    function openReserveModal(tableId) {
+      pendingReserveTableId = Number(tableId || 0);
+      document.getElementById("reserveCustomerName").value = "";
+      document.getElementById("reserveCustomerPhone").value = "";
+      document.getElementById("reserveModal").style.display = "flex";
+    }
+
+    function closeReserveModal() {
+      pendingReserveTableId = null;
+      document.getElementById("reserveModal").style.display = "none";
+    }
+
+    async function submitReserveForm(event) {
+      event.preventDefault();
+      const customerName = String(document.getElementById("reserveCustomerName").value || "").trim();
+      const customerPhone = String(document.getElementById("reserveCustomerPhone").value || "").trim();
+
+      if (!pendingReserveTableId) {
+        alert("Không tìm thấy bàn cần đặt trước.");
+        return;
+      }
+      if (!customerName) {
+        alert("Vui lòng nhập tên khách hàng.");
+        return;
+      }
+      if (!/^\d{9,11}$/.test(customerPhone)) {
+        alert("Số điện thoại không hợp lệ (9-11 chữ số).");
+        return;
+      }
+
+      const result = await fetchWithMethod("/api/tables", "PUT", {
+        id: pendingReserveTableId,
+        action: "reserve",
+        customerName,
+        customerPhone
+      });
+      if (result) {
+        closeReserveModal();
+        await loadTables();
+      }
+    }
+
+    async function openOrderModal(tableId) {
+      pendingOrderTableId = Number(tableId || 0);
+      document.getElementById("orderTitle").textContent = `Gọi món cho bàn #${pendingOrderTableId}`;
+      await loadOrderDishOptions();
+      await loadOrderItemsForCurrentTable();
+      document.getElementById("orderModal").style.display = "flex";
+    }
+
+    function closeOrderModal() {
+      pendingOrderTableId = null;
+      document.getElementById("orderModal").style.display = "none";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    async function loadOrderDishOptions() {
+      const dishRes = await getJson("/api/dishes");
+      orderDishCache = dishRes?.items || [];
+      renderOrderZodiacTabs();
+      renderOrderFoodCards();
+    }
+
+    function renderOrderZodiacTabs() {
+      const host = document.getElementById("orderZodiacTabs");
+      if (!host) {
+        return;
+      }
+      host.innerHTML = orderZodiacs.map((z) => {
+        const active = z.key === currentOrderZodiac ? "is-active" : "";
+        return `<button class="chip ${active}" data-order-zodiac="${z.key}">${z.label}</button>`;
+      }).join("");
+
+      host.querySelectorAll("[data-order-zodiac]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          currentOrderZodiac = btn.getAttribute("data-order-zodiac") || "All";
+          renderOrderZodiacTabs();
+          renderOrderFoodCards();
+        });
+      });
+    }
+
+    function renderOrderFoodCards() {
+      const host = document.getElementById("orderFoodGrid");
+      if (!host) {
+        return;
+      }
+
+      const searchText = String(document.getElementById("orderFoodSearch")?.value || "").trim().toLowerCase();
+      const sortType = String(document.getElementById("orderFoodSort")?.value || "");
+      const filtered = orderDishCache
+        .filter((d) => currentOrderZodiac === "All" || String(d.type || "") === currentOrderZodiac)
+        .filter((d) => !searchText || String(d.name || "").toLowerCase().includes(searchText))
+        .sort((a, b) => {
+          if (sortType === "priceAsc") return Number(a.price || 0) - Number(b.price || 0);
+          if (sortType === "priceDesc") return Number(b.price || 0) - Number(a.price || 0);
+          if (sortType === "nameAsc") return String(a.name || "").localeCompare(String(b.name || ""), "vi");
+          return 0;
+        });
+
+      if (!filtered.length) {
+        host.innerHTML = '<div class="nb-empty">Không có món phù hợp.</div>';
+        return;
+      }
+
+      host.innerHTML = filtered.map((d) => {
+        const qty = orderQuantityByDish.get(Number(d.id)) || 0;
+        const disabled = !String(d.status || "").toLowerCase().includes("dang");
+        const imgUrl = `/api/dish-image?type=${encodeURIComponent(String(d.type || "Unknown"))}&id=${encodeURIComponent(String(d.id || ""))}`;
+        return `<article class="nb-food-card">
+          <div class="nb-food-thumb"><img src="${imgUrl}" alt="${escapeHtml(d.name)}" loading="lazy" /></div>
+          <h3>${escapeHtml(d.name)}</h3>
+          <p>${Number(d.price || 0).toLocaleString("vi-VN")}đ</p>
+          <div class="nb-qty">
+            <button class="nb-qty-btn" data-order-qty-minus="${d.id}">−</button>
+            <span id="order-qty-${d.id}">${qty}</span>
+            <button class="nb-qty-btn" data-order-qty-plus="${d.id}">+</button>
+          </div>
+          <button class="nb-add-btn" data-order-dish="${d.id}" ${disabled ? "disabled" : ""}>THÊM</button>
+        </article>`;
+      }).join("");
+
+      host.querySelectorAll("[data-order-qty-plus]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const dishId = Number(btn.getAttribute("data-order-qty-plus"));
+          const next = (orderQuantityByDish.get(dishId) || 1) + 1;
+          orderQuantityByDish.set(dishId, next);
+          const quantityEl = document.getElementById(`order-qty-${dishId}`);
+          if (quantityEl) quantityEl.textContent = String(next);
+        });
+      });
+
+      host.querySelectorAll("[data-order-qty-minus]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const dishId = Number(btn.getAttribute("data-order-qty-minus"));
+          const next = Math.max(0, (orderQuantityByDish.get(dishId) || 0) - 1);
+          orderQuantityByDish.set(dishId, next);
+          const quantityEl = document.getElementById(`order-qty-${dishId}`);
+          if (quantityEl) quantityEl.textContent = String(next);
+        });
+      });
+
+      host.querySelectorAll("[data-order-dish]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const dishId = Number(btn.getAttribute("data-order-dish"));
+          const qty = orderQuantityByDish.get(dishId) || 0;
+          if (qty <= 0) {
+            alert("Vui lòng chọn số lượng món trước khi thêm.");
+            return;
+          }
+          await orderDishForCurrentTable(dishId, qty);
+        });
+      });
+    }
+
+    async function getUnpaidBillByTable(tableId) {
+      const billRes = await getJson(`/api/bills?tableId=${encodeURIComponent(tableId)}&unpaidOnly=true`);
+      return billRes?.items?.[0] || null;
+    }
+
+    async function ensureOrderBill(tableId, customerId) {
+      const existing = await getUnpaidBillByTable(tableId);
+      if (existing?.id) {
+        return existing.id;
+      }
+
+      if (customerId <= 0) {
+        throw new Error("Vui lòng nhập ID khách hàng để tạo hóa đơn mới.");
+      }
+
+      const created = await fetchWithMethod("/api/bills", "POST", {
+        customerId,
+        tableId
+      });
+      const createdId = Number(created?.id || 0);
+      if (!createdId) {
+        throw new Error("Không tạo được hóa đơn cho bàn này.");
+      }
+      return createdId;
+    }
+
+    async function loadOrderItemsForCurrentTable() {
+      if (!pendingOrderTableId) {
+        renderRows("orderItemsRows", [], () => [], 4);
+        return;
+      }
+
+      const unpaid = await getUnpaidBillByTable(pendingOrderTableId);
+      if (!unpaid?.id) {
+        renderRows("orderItemsRows", [], () => [], 4);
+        return;
+      }
+
+      const itemsRes = await getJson(`/api/bill-items?billId=${encodeURIComponent(unpaid.id)}`);
+      renderRows("orderItemsRows", itemsRes?.items || [], (x) => [
+        x.dishId,
+        x.dishName,
+        x.quantity,
+        Number(x.total || 0).toLocaleString("vi-VN")
+      ], 4);
+    }
+
+    async function orderDishForCurrentTable(dishId, quantity) {
+      if (!pendingOrderTableId) {
+        alert("Không tìm thấy bàn cần gọi món.");
+        return;
+      }
+
+      const customerId = Number(document.getElementById("orderCustomerId").value || 0);
+      if (dishId <= 0 || quantity <= 0) {
+        alert("Vui lòng chọn món và số lượng hợp lệ.");
+        return;
+      }
+
+      try {
+        const billId = await ensureOrderBill(pendingOrderTableId, customerId);
+        const result = await fetchWithMethod("/api/bill-items", "POST", { billId, dishId, quantity });
+        if (result) {
+          await loadOrderItemsForCurrentTable();
+          await loadTables();
+        }
+      } catch (error) {
+        alert(`Lỗi: ${error.message}`);
+      }
+    }
+
+    function renderTableActions(table) {
+      const status = String(table?.status || "").toLowerCase();
+      if (status.includes("con trong") || status.includes("còn trống")) {
+        return `
+          <button class="btn-edit" data-table-id="${table.id}" data-table-action="reserve">Đặt trước</button>
+          <button class="btn-edit" data-table-id="${table.id}" data-table-action="occupy">Nhận khách</button>
+        `;
+      }
+      if (status.includes("da dat") || status.includes("đã đặt")) {
+        return `
+          <button class="btn-delete" data-table-id="${table.id}" data-table-action="cancel-reserve">Hủy đặt trước</button>
+          <button class="btn-edit" data-table-id="${table.id}" data-table-action="occupy">Nhận khách</button>
+        `;
+      }
+      if (status.includes("dang dung") || status.includes("đang dùng")) {
+        return `
+          <button class="btn-edit" data-table-id="${table.id}" data-table-action="order">Gọi món</button>
+          <button class="btn-delete" data-table-id="${table.id}" data-table-action="release">Trả bàn</button>
+        `;
+      }
+      return `<button class="btn-edit" data-table-id="${table.id}" data-table-action="release">Cập nhật</button>`;
+    }
+
+    async function loadCustomers() {
+      const data = await getJson("/api/customers");
+      renderRows("customerRows", data?.items || [], (c) => [
+        c.id,
+        c.name,
+        c.joinedDate,
+        Number(c.points || 0).toLocaleString("vi-VN"),
+        Number(c.sales || 0).toLocaleString("vi-VN")
+      ], 5);
+    }
+
+    loadTables();
+    loadCustomers();
+    document.getElementById("orderFoodSearch")?.addEventListener("input", renderOrderFoodCards);
+    document.getElementById("orderFoodSort")?.addEventListener("change", renderOrderFoodCards);
+  </script>
+</body>
+</html>
